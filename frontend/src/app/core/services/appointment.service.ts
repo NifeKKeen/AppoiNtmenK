@@ -25,7 +25,7 @@ export interface AppointmentPayload {
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentService {
-  private readonly API = 'http://localhost:8000/api';
+  private readonly API = 'https://appointmenk.onrender.com/api';
 
   constructor(private http: HttpClient) {}
 
