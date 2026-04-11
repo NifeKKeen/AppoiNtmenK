@@ -1,0 +1,60 @@
+    @if (specialist) {
+      <div class="detail-page" [style.--accent]="specialist.color">
+        <div class="detail-hero">
+          <div class="detail-hero-bg"></div>
+          <div class="detail-hero-content">
+            <div class="detail-icon">{{ specialist.icon }}</div>
+            <h1 class="detail-name">{{ specialist.name }}</h1>
+            <p class="detail-role">{{ specialist.role }}</p>
+          </div>
+        </div>
+        <div class="detail-body">
+          <div class="detail-grid">
+            <!-- About Section -->
+            <div class="detail-section about-section">
+              <h2>About</h2>
+              <p class="detail-description">{{ specialist.description }}</p>
+            </div>
+            <!-- Availability Section -->
+            <div class="detail-section slots-section">
+              <h2>Available Time Slots</h2>
+              <div class="slots-grid">
+                @for (slot of specialist.time_slots; track slot) {
+                  <span
+                    class="slot-chip"
+                    >
+                    {{ slot }}
+                  </span>
+                }
+              </div>
+              <p class="slots-note">Each session is 15 minutes. Pick a slot when booking.</p>
+            </div>
+          </div>
+          <div class="detail-actions">
+            <a
+              [routerLink]="['/book']"
+              [queryParams]="{ specialist: specialist.id }"
+              class="btn btn-book"
+              id="book-specialist-btn"
+              >
+              🆘 Book {{ specialist.name }} Now
+            </a>
+            <a routerLink="/specialists" class="btn btn-back">← Back to Roster</a>
+          </div>
+        </div>
+      </div>
+    }
+    
+    @if (!specialist && !error) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading specialist profile...</p>
+      </div>
+    }
+    
+    @if (error) {
+      <div class="error-state">
+        <p>{{ error }}</p>
+        <a routerLink="/specialists" class="btn btn-back">← Back to Roster</a>
+      </div>
+    }

@@ -1,0 +1,27 @@
+    <div class="specialist-list-page">
+      <div class="page-header">
+        <h1>Specialist Roster</h1>
+        <p>Choose your hero. Each specialist is ready for a 15-minute rescue mission.</p>
+      </div>
+    
+      <div class="specialists-grid" id="specialists-grid">
+        @for (spec of specialists; track spec) {
+          <a
+            [routerLink]="['/specialists', spec.slug]"
+            class="spec-card"
+            [style.--accent]="spec.color"
+            [id]="'specialist-card-' + spec.slug"
+            >
+            <div class="spec-card-glow"></div>
+            <div class="spec-icon">{{ spec.icon }}</div>
+            <h2 class="spec-name">{{ spec.name }}</h2>
+            <p class="spec-role">{{ spec.role }}</p>
+            <p class="spec-desc">{{ spec.description | slice:0:150 }}...</p>
+            <div class="spec-meta">
+              <span class="spec-slots">{{ spec.time_slots.length }} time slots</span>
+              <span class="spec-arrow">→</span>
+            </div>
+          </a>
+        }
+      </div>
+    </div>

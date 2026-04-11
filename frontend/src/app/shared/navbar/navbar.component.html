@@ -1,0 +1,30 @@
+    @if (showNavbar) {
+      <nav class="navbar" id="main-navbar">
+        <div class="nav-inner">
+          <a routerLink="/specialists" class="nav-brand" id="nav-brand">
+            Appo<span class="brand-i">i</span>NtmenK
+          </a>
+          <div class="nav-links">
+            @for (spec of specialists; track spec) {
+              <a
+                [routerLink]="['/specialists', spec.slug]"
+                routerLinkActive="active"
+                class="nav-link"
+                [id]="'nav-specialist-' + spec.slug"
+                >
+                {{ spec.icon }} {{ spec.name }}
+              </a>
+            }
+            <a routerLink="/book" routerLinkActive="active" class="nav-link" id="nav-book">
+              🆘 Book
+            </a>
+            <a routerLink="/dashboard" routerLinkActive="active" class="nav-link" id="nav-dashboard">
+              📋 My Requests
+            </a>
+          </div>
+          <button class="nav-logout" (click)="logout()" id="nav-logout-btn">
+            Sign Out
+          </button>
+        </div>
+      </nav>
+    }

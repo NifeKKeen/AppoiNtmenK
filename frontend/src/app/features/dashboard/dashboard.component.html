@@ -1,0 +1,67 @@
+    <div class="dashboard-page">
+      <div class="dashboard-header">
+        <h1>My SOS Requests</h1>
+        <p>Track your upcoming rescue sessions.</p>
+      </div>
+    
+      <div class="dashboard-actions">
+        <a routerLink="/book" class="btn btn-new" id="new-booking-btn">+ New SOS Request</a>
+      </div>
+    
+      <!-- Empty State -->
+      @if (appointments.length === 0 && !loading) {
+        <div class="empty-state" id="dashboard-empty">
+          <div class="empty-icon">📭</div>
+          <h2>No requests yet</h2>
+          <p>Book a rescue session with a specialist to get started.</p>
+          <a routerLink="/specialists" class="btn btn-browse">Browse Specialists</a>
+        </div>
+      }
+    
+      <!-- Loading -->
+      @if (loading) {
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading your requests...</p>
+        </div>
+      }
+    
+      <!-- Appointments List -->
+      @if (appointments.length > 0) {
+        <div class="appointments-grid" id="appointments-list">
+          @for (appt of appointments; track appt) {
+            <div
+              class="appt-card"
+              [style.--accent]="appt.specialist_color"
+              [id]="'appointment-' + appt.id"
+              >
+              <div class="appt-header">
+                <span class="appt-icon">{{ appt.specialist_icon }}</span>
+                <div>
+                  <h3 class="appt-specialist">{{ appt.specialist_name }}</h3>
+                  <app-status-badge [status]="appt.status" />
+                </div>
+              </div>
+              <div class="appt-details">
+                <div class="appt-detail">
+                  <span class="detail-label">📅 Date</span>
+                  <span class="detail-value">{{ appt.date }}</span>
+                </div>
+                <div class="appt-detail">
+                  <span class="detail-label">🕐 Time</span>
+                  <span class="detail-value">{{ appt.time_slot }}</span>
+                </div>
+              </div>
+              <p class="appt-desc">{{ appt.description }}</p>
+              <button
+                class="btn btn-cancel"
+                (click)="cancelAppointment(appt.id)"
+                [id]="'cancel-' + appt.id"
+                >
+                ✕ Cancel
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>

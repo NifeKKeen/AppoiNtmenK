@@ -1,0 +1,97 @@
+    <div class="booking-page">
+      <div class="booking-card">
+        <h1 class="booking-title">🆘 SOS Booking Form</h1>
+        <p class="booking-subtitle">Fill out the details below to request a rescue session.</p>
+    
+        <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form" id="booking-form">
+          <!-- Specialist Select -->
+          <div class="form-group">
+            <label for="specialist">Specialist</label>
+            <select
+              id="specialist"
+              formControlName="specialist"
+              (change)="onSpecialistChange()"
+              >
+              <option value="" disabled>Select a specialist...</option>
+              @for (spec of specialists; track spec) {
+                <option
+                  [value]="spec.id"
+                  >
+                  {{ spec.icon }} {{ spec.name }} — {{ spec.role }}
+                </option>
+              }
+            </select>
+            @if (bookingForm.get('specialist')?.touched && bookingForm.get('specialist')?.invalid) {
+              <div class="field-error">
+                Please select a specialist
+              </div>
+            }
+          </div>
+    
+          <!-- Date -->
+          <div class="form-group">
+            <label for="date">Date</label>
+            <input
+              type="date"
+              id="date"
+              formControlName="date"
+              [min]="minDate"
+              />
+            @if (bookingForm.get('date')?.touched && bookingForm.get('date')?.invalid) {
+              <div class="field-error">
+                Please select a date
+              </div>
+            }
+          </div>
+    
+          <!-- Time Slot -->
+          <div class="form-group">
+            <label for="time_slot">Time Slot</label>
+            <select id="time_slot" formControlName="time_slot">
+              <option value="" disabled>Select a time slot...</option>
+              @for (slot of availableSlots; track slot) {
+                <option [value]="slot">
+                  {{ slot }} (15 min)
+                </option>
+              }
+            </select>
+            @if (bookingForm.get('time_slot')?.touched && bookingForm.get('time_slot')?.invalid) {
+              <div class="field-error">
+                Please select a time slot
+              </div>
+            }
+          </div>
+    
+          <!-- Description -->
+          <div class="form-group">
+            <label for="description">Describe Your Emergency</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              rows="4"
+              placeholder="E.g., My Python Flask app crashes on POST requests with a 500 error. I've tried checking the routes but nothing works..."
+            ></textarea>
+            @if (bookingForm.get('description')?.touched && bookingForm.get('description')?.invalid) {
+              <div class="field-error">
+                Please describe your problem (at least 10 characters)
+              </div>
+            }
+          </div>
+    
+          <!-- Error -->
+          @if (error) {
+            <div class="error-msg" id="booking-error">{{ error }}</div>
+          }
+    
+          <!-- Submit -->
+          <button
+            type="submit"
+            class="btn btn-submit"
+            id="booking-submit-btn"
+            [disabled]="bookingForm.invalid || loading"
+            >
+            {{ loading ? 'Submitting...' : '📨 Submit SOS Request' }}
+          </button>
+        </form>
+      </div>
+    </div>

@@ -1,0 +1,76 @@
+    <div class="landing">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+          <div class="badge">🆘 CAMPUS EMERGENCY SERVICES</div>
+          <h1 class="hero-title">
+            Appo<span class="highlight-i">i</span>NtmenK
+          </h1>
+          <p class="hero-subtitle">
+            Stuck on code? Lost in equations? Slides look like chaos?<br>
+            Book a <strong>15-minute rescue session</strong> with a campus specialist.
+          </p>
+          <div class="hero-actions">
+            <a routerLink="/register" class="btn btn-primary" id="landing-get-help-btn">
+              🆘 Get Help Now
+            </a>
+            <a routerLink="/login" class="btn btn-ghost" id="landing-login-btn">
+              Already registered? Sign in
+            </a>
+          </div>
+        </div>
+      </section>
+    
+      <!-- Specialist Preview Cards -->
+      <section class="specialists-preview" id="specialists-preview">
+        <h2 class="section-title">Meet Your Rescue Team</h2>
+        <div class="cards-grid">
+          @for (spec of specialists; track spec) {
+            <div
+              class="specialist-card"
+              [style.--accent]="spec.color"
+              >
+              <div class="card-icon">{{ spec.icon }}</div>
+              <h3 class="card-name">{{ spec.name }}</h3>
+              <p class="card-role">{{ spec.role }}</p>
+              <p class="card-desc">{{ spec.description | slice:0:120 }}...</p>
+              <div class="card-slots">
+                <span class="slot-count">{{ spec.time_slots.length }} slots available</span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    
+      <!-- How It Works -->
+      <section class="how-it-works">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">01</div>
+            <h3>Register</h3>
+            <p>Create your student account in seconds</p>
+          </div>
+          <div class="step">
+            <div class="step-number">02</div>
+            <h3>Pick a Specialist</h3>
+            <p>Browse profiles and find the right expert</p>
+          </div>
+          <div class="step">
+            <div class="step-number">03</div>
+            <h3>Book a Slot</h3>
+            <p>Choose a time and describe your emergency</p>
+          </div>
+          <div class="step">
+            <div class="step-number">04</div>
+            <h3>Get Rescued</h3>
+            <p>Show up and leave with answers</p>
+          </div>
+        </div>
+      </section>
+    
+      <footer class="landing-footer">
+        <p>&copy; 2026 AppoiNtmenK — Campus SOS Hub</p>
+      </footer>
+    </div>
