@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_URL } from '../config';
 
 export interface Appointment {
   id: number;
@@ -25,7 +26,7 @@ export interface AppointmentPayload {
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentService {
-  private readonly API = 'https://appointmenk.onrender.com/api';
+  private readonly API = API_URL;
 
   constructor(private http: HttpClient) {}
 

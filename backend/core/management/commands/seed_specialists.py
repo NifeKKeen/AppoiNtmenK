@@ -1,32 +1,31 @@
 from django.core.management.base import BaseCommand
+from django.contrib.auth import get_user_model
 from core.models import Specialist
 
+User = get_user_model()
 
 class Command(BaseCommand):
     help = 'Seed the database with the three AppoiNtmenK specialists'
 
     def handle(self, *args, **options):
+        # Ensure superuser exists for Render deployment
+        if not User.objects.filter(username='admin').exists():
+            User.objects.create_superuser('admin', 'admin@example.com', 'kanich')
+            self.stdout.write(self.style.SUCCESS('Superuser "admin" created successfully!'))
+
         specialists = [
             {
                 'name': 'Adilet',
                 'slug': 'adilet',
                 'role': 'Math & Logic Whisperer',
                 'description': (
-                    'When numbers betray you and proofs crumble, Adilet is your lifeline. '
-                    'Specializing in discrete mathematics, calculus, and algorithmic logic, '
-                    'he can untangle the most convoluted equations in a single 15-minute session. '
-                    'Known for turning "I have no idea" into "oh, it\'s actually simple" — '
-                    'Adilet\'s whiteboard sessions are legendary on campus.'
+                    'МЛ модель құрап беруге еш қиындықсыз көмектесе аламын.'
                 ),
                 'color': 'hsl(270, 70%, 60%)',
-                'icon': '🧮',
+                'icon': '📠',
                 'avatar_url': '',
                 'time_slots': [
                     '09:00', '09:15', '09:30', '09:45',
-                    '10:00', '10:15', '10:30', '10:45',
-                    '11:00', '11:15', '11:30', '11:45',
-                    '14:00', '14:15', '14:30', '14:45',
-                    '15:00', '15:15', '15:30', '15:45',
                 ],
             },
             {
@@ -34,11 +33,7 @@ class Command(BaseCommand):
                 'slug': 'nuridin',
                 'role': 'Code Debugger',
                 'description': (
-                    'Runtime errors at 3 AM? Merge conflicts that make no sense? '
-                    'Nuridin has seen it all. With deep expertise in Python, TypeScript, '
-                    'and full-stack architecture, he can spot a missing semicolon from '
-                    'across the room. His debugging sessions have saved more GPAs than '
-                    'any textbook ever could. Bring your broken code — leave with working software.'
+                    'Бааа, не болып калды тагы'
                 ),
                 'color': 'hsl(160, 70%, 50%)',
                 'icon': '💻',
@@ -56,21 +51,28 @@ class Command(BaseCommand):
                 'slug': 'kanich',
                 'role': 'Presentation & Design Polisher',
                 'description': (
-                    'Your slides look like a ransom note? Your poster has 47 fonts? '
-                    'Kanich will fix that. A master of visual communication, UI/UX principles, '
-                    'and slide design, he transforms chaotic presentations into compelling stories. '
-                    'Whether it\'s a thesis defense or a class demo, Kanich ensures your delivery '
-                    'matches your data. "Design is not how it looks — it\'s how it works."'
+                    'Че там, не керек? Ақчаааа ақчааааааааа керек, тез тез'
                 ),
-                'color': 'hsl(30, 90%, 60%)',
-                'icon': '🎨',
+                'color': 'hsl(60, 90%, 60%)',
+                'icon': '🤑',
                 'avatar_url': '',
                 'time_slots': [
-                    '09:00', '09:15', '09:30', '09:45',
-                    '10:00', '10:15', '10:30', '10:45',
-                    '13:00', '13:15', '13:30', '13:45',
-                    '15:00', '15:15', '15:30', '15:45',
                     '16:00', '16:15', '16:30', '16:45',
+                ],
+            },
+            {
+                'name': 'Jeffery',
+                'slug': 'jeff',
+                'role': 'Tourist-Consultant',
+                'description': (
+                    'Love entertainment? Come here to my island and I will show how'
+                    ' cool dudes hang out.'
+                ),
+                'color': 'hsl(10, 60%, 50%)',
+                'icon': '🏝️',
+                'avatar_url': '',
+                'time_slots': [
+                    '23:00', '01:00',
                 ],
             },
         ]

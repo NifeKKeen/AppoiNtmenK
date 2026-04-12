@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, BehaviorSubject } from 'rxjs';
+import { API_URL } from '../config';
 
 export interface LoginResponse {
   access: string;
@@ -15,7 +16,7 @@ export interface RegisterPayload {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly API = 'https://appointmenk.onrender.com/api';
+  private readonly API = API_URL;
   private loggedIn$ = new BehaviorSubject<boolean>(this.hasToken());
 
   constructor(private http: HttpClient) {}
