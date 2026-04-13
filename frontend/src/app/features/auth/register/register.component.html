@@ -40,6 +40,64 @@
               required
               />
           </div>
+
+          <label class="checkbox-card" for="become-specialist">
+            <input
+              type="checkbox"
+              id="become-specialist"
+              name="becomeSpecialist"
+              [(ngModel)]="becomeSpecialist"
+              (change)="onSpecialistToggle()"
+            />
+            <span>
+              <strong>Become a specialist</strong>
+              <small>Create a hero profile right away</small>
+            </span>
+          </label>
+
+          @if (becomeSpecialist) {
+            <div class="specialist-fields" id="specialist-register-fields">
+              <div class="form-group">
+                <label for="specialist-role">Specialization</label>
+                <select
+                  id="specialist-role"
+                  name="specialistRole"
+                  [(ngModel)]="specialistRole"
+                  required
+                >
+                  <option value="" disabled>Select your role</option>
+                  @for (role of specialistRoles; track role) {
+                    <option [value]="role">{{ role }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="specialist-description">Tell us how you can help</label>
+                <textarea
+                  id="specialist-description"
+                  name="specialistDescription"
+                  [(ngModel)]="specialistDescription"
+                  placeholder="Describe your expertise and what users can ask you"
+                  rows="4"
+                  required
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="specialist-icon">Emoji avatar (optional)</label>
+                <select
+                  id="specialist-icon"
+                  name="specialistIcon"
+                  [(ngModel)]="specialistIcon"
+                >
+                  @for (icon of iconOptions; track icon) {
+                    <option [value]="icon">{{ icon }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          }
     
           @if (error) {
             <div class="error-msg" id="register-error">{{ error }}</div>

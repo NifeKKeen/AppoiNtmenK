@@ -12,6 +12,38 @@ export interface RegisterPayload {
   username: string;
   email: string;
   password: string;
+  become_specialist?: boolean;
+  specialist_role?: string;
+  specialist_description?: string;
+  specialist_icon?: string;
+}
+
+export interface UpgradeSpecialistPayload {
+  specialist_role: string;
+  specialist_description: string;
+  specialist_icon?: string;
+}
+
+export interface SpecialistProfile {
+  id: number;
+  name: string;
+  slug: string;
+  role: string;
+  description: string;
+  color: string;
+  icon: string;
+  avatar_url: string;
+  time_slots: string[];
+  is_active: boolean;
+}
+
+export interface UserProfile {
+  id: number;
+  username: string;
+  email: string;
+  role: 'USER' | 'SPECIALIST';
+  is_specialist: boolean;
+  specialist_profile: SpecialistProfile | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -27,6 +59,14 @@ export class AuthService {
 
   register(payload: RegisterPayload): Observable<any> {
     return this.http.post(`${this.API}/register/`, payload);
+  }
+
+  getProfile(): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${this.API}/profile/`);
+  }
+
+  upgradeToSpecialist(payload: UpgradeSpecialistPayload): Observable<UserProfile> {
+    return this.http.post<UserProfile>(`${this.API}/profile/upgrade-specialist/`, payload);
   }
 
   login(username: string, password: string): Observable<LoginResponse> {

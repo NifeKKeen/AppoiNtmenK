@@ -3,6 +3,77 @@
         <h1>My SOS Requests</h1>
         <p>Track your upcoming rescue sessions.</p>
       </div>
+
+      @if (!profileLoading && profile && !profile.is_specialist) {
+        <section class="upgrade-card" id="upgrade-specialist-card">
+          <div class="upgrade-head">
+            <div>
+              <h2>Стать специалистом</h2>
+              <p>Открой профиль героя, чтобы помогать другим пользователям.</p>
+            </div>
+            <button class="btn btn-upgrade" (click)="toggleUpgradeForm()" id="toggle-upgrade-form-btn">
+              {{ showUpgradeForm ? 'Скрыть форму' : 'Стать специалистом' }}
+            </button>
+          </div>
+
+          @if (showUpgradeForm) {
+            <form class="upgrade-form" (ngSubmit)="submitUpgrade()" id="upgrade-form">
+              <div class="form-group">
+                <label for="upgrade-role">Специализация</label>
+                <select id="upgrade-role" name="upgradeRole" [(ngModel)]="upgradeRole" required>
+                  <option value="" disabled>Выбери роль</option>
+                  @for (role of specialistRoles; track role) {
+                    <option [value]="role">{{ role }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="upgrade-description">Описание</label>
+                <textarea
+                  id="upgrade-description"
+                  name="upgradeDescription"
+                  [(ngModel)]="upgradeDescription"
+                  rows="4"
+                  placeholder="Расскажи, в чем твоя сила и кому ты можешь помочь"
+                  required
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="upgrade-icon">Emoji avatar</label>
+                <select id="upgrade-icon" name="upgradeIcon" [(ngModel)]="upgradeIcon">
+                  @for (icon of iconOptions; track icon) {
+                    <option [value]="icon">{{ icon }}</option>
+                  }
+                </select>
+              </div>
+
+              @if (upgradeError) {
+                <div class="error-msg" id="upgrade-error">{{ upgradeError }}</div>
+              }
+
+              <button class="btn btn-submit-upgrade" type="submit" [disabled]="upgradeLoading" id="submit-upgrade-btn">
+                {{ upgradeLoading ? 'Сохраняем...' : 'Подтвердить апгрейд' }}
+              </button>
+            </form>
+          }
+
+          @if (upgradeSuccess) {
+            <div class="success-msg" id="upgrade-success">{{ upgradeSuccess }}</div>
+          }
+        </section>
+      }
+
+      @if (!profileLoading && profile?.is_specialist) {
+        <section class="specialist-active-badge" id="specialist-active-badge">
+          <span>{{ profile?.specialist_profile?.icon || '🧠' }}</span>
+          <div>
+            <strong>Профиль специалиста активен</strong>
+            <p>{{ profile?.specialist_profile?.role }}</p>
+          </div>
+        </section>
+      }
     
       <div class="dashboard-actions">
         <a routerLink="/book" class="btn btn-new" id="new-booking-btn">+ New SOS Request</a>
