@@ -1,0 +1,94 @@
+<div class="calendar-page">
+  <header class="calendar-hero">
+    <h1>Common Availability Calendar</h1>
+    <p>Filter by specialist or time and book any free slot in one click.</p>
+  </header>
+
+  <section class="filters" id="availability-filters">
+    <div class="field">
+      <label for="startDate">Start date</label>
+      <input id="startDate" type="date" [(ngModel)]="startDate" />
+    </div>
+
+    <div class="field">
+      <label for="days">Days</label>
+      <input id="days" type="number" min="1" max="31" [(ngModel)]="days" />
+    </div>
+
+    <div class="field">
+      <label for="specialist">Specialist</label>
+      <select id="specialist" [(ngModel)]="specialistSlug">
+        <option value="">All specialists</option>
+        @for (spec of specialists; track spec.id) {
+          <option [value]="spec.slug">{{ spec.icon }} {{ spec.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="from">Time from</label>
+      <input id="from" type="time" [(ngModel)]="timeFrom" />
+    </div>
+
+    <div class="field">
+      <label for="to">Time to</label>
+      <input id="to" type="time" [(ngModel)]="timeTo" />
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" type="button" (click)="applyFilters()">Apply filters</button>
+      <button class="btn ghost" type="button" (click)="resetFilters()">Reset</button>
+    </div>
+  </section>
+
+  @if (loading) {
+    <section class="state">Loading calendar...</section>
+  }
+
+  @if (error) {
+    <section class="state error">{{ error }}</section>
+  }
+
+  @if (!loading && !error && rows.length === 0) {
+    <section class="state">No free slots found for these filters.</section>
+  }
+
+  @if (!loading && !error && rows.length > 0) {
+    <div class="days">
+      @for (group of groupedByDate; track group.date) {
+        <section class="day-block" [id]="'day-' + group.date">
+          <h2>{{ group.date }}</h2>
+
+          <div class="entries">
+            @for (row of group.entries; track trackByRow($index, row)) {
+              <article class="entry-card">
+                <header>
+                  <h3>{{ row.specialist.icon }} {{ row.specialist.name }}</h3>
+                  <span>{{ row.specialist.role }}</span>
+                </header>
+
+                @if (row.available_slots.length > 0) {
+                  <div class="slot-list">
+                    @for (slot of row.available_slots; track slot) {
+                      <a
+                        class="slot-link"
+                        [routerLink]="['/book']"
+                        [queryParams]="{ specialist: row.specialist.id, date: row.date, time_slot: slot }"
+                      >
+                        {{ slot }}
+                      </a>
+                    }
+                  </div>
+                }
+
+                @if (row.available_slots.length === 0) {
+                  <p class="empty">No free slots</p>
+                }
+              </article>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  }
+</div>

@@ -15,6 +15,7 @@ import { filter } from 'rxjs';
 export class NavbarComponent implements OnInit {
   showNavbar = false;
   specialists: Specialist[] = [];
+  isSpecialist = false;
 
   private hiddenRoutes = ['/', '/login', '/register'];
 
@@ -32,6 +33,10 @@ export class NavbarComponent implements OnInit {
         this.showNavbar =
           !this.hiddenRoutes.includes(e.urlAfterRedirects) &&
           this.authService.hasToken();
+
+        if (this.showNavbar && this.authService.hasToken()) {
+          this.loadProfileRole();
+        }
       });
 
     // Check immediately on init
@@ -44,6 +49,7 @@ export class NavbarComponent implements OnInit {
       this.specialistService.getAll().subscribe((data) => {
         this.specialists = data;
       });
+      this.loadProfileRole();
     }
 
     // Reload specialists when login state changes
@@ -52,7 +58,23 @@ export class NavbarComponent implements OnInit {
         this.specialistService.getAll().subscribe((data) => {
           this.specialists = data;
         });
+        this.loadProfileRole();
       }
+
+      if (!loggedIn) {
+        this.isSpecialist = false;
+      }
+    });
+  }
+
+  loadProfileRole() {
+    this.authService.getProfile().subscribe({
+      next: (profile) => {
+        this.isSpecialist = profile.is_specialist;
+      },
+      error: () => {
+        this.isSpecialist = false;
+      },
     });
   }
 

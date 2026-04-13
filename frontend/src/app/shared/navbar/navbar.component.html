@@ -18,9 +18,17 @@
             <a routerLink="/book" routerLinkActive="active" class="nav-link" id="nav-book">
               🆘 Book
             </a>
+            <a routerLink="/calendar" routerLinkActive="active" class="nav-link" id="nav-calendar">
+              🗓️ Calendar
+            </a>
             <a routerLink="/dashboard" routerLinkActive="active" class="nav-link" id="nav-dashboard">
               📋 My Requests
             </a>
+            @if (isSpecialist) {
+              <a routerLink="/specialist/dashboard" routerLinkActive="active" class="nav-link" id="nav-specialist-dashboard">
+                🧩 Specialist Desk
+              </a>
+            }
           </div>
           <button class="nav-logout" (click)="logout()" id="nav-logout-btn">
             Sign Out

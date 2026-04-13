@@ -6,6 +6,8 @@ import { SpecialistListComponent } from './features/specialists/specialist-list/
 import { SpecialistDetailComponent } from './features/specialists/specialist-detail/specialist-detail.component';
 import { BookingComponent } from './features/booking/booking.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { SpecialistDashboardComponent } from './features/specialist-dashboard/specialist-dashboard.component';
+import { AvailabilityCalendarComponent } from './features/availability-calendar/availability-calendar.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -15,6 +17,8 @@ export const routes: Routes = [
   { path: 'specialists', component: SpecialistListComponent, canActivate: [authGuard] },
   { path: 'specialists/:slug', component: SpecialistDetailComponent, canActivate: [authGuard] },
   { path: 'book', component: BookingComponent, canActivate: [authGuard] },
+  { path: 'calendar', component: AvailabilityCalendarComponent, canActivate: [authGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'specialist/dashboard', component: SpecialistDashboardComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: '' },
 ];

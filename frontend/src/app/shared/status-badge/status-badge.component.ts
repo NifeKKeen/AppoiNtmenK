@@ -27,6 +27,16 @@ import { CommonModule } from '@angular/common';
       color: hsl(160, 70%, 55%);
     }
 
+    .status-accepted {
+      background: hsla(160, 70%, 50%, 0.15);
+      color: hsl(160, 70%, 55%);
+    }
+
+    .status-rejected {
+      background: hsla(0, 80%, 55%, 0.15);
+      color: hsl(0, 80%, 65%);
+    }
+
     .status-completed {
       background: hsla(270, 70%, 60%, 0.15);
       color: hsl(270, 70%, 65%);

@@ -1,5 +1,21 @@
     <div class="booking-page">
       <div class="booking-card">
+        @if (submitted) {
+          <section class="confirmation" id="booking-confirmation">
+            <h1 class="booking-title">Request submitted</h1>
+            <p class="booking-subtitle">Your SOS session is now pending specialist confirmation.</p>
+
+            <div class="confirmation-actions">
+              <a class="btn btn-submit" [href]="calendarUrl" target="_blank" rel="noopener noreferrer" id="add-google-calendar-btn">
+                Add to my calendar
+              </a>
+              <a class="btn btn-secondary" routerLink="/dashboard">Go to My Requests</a>
+              <a class="btn btn-secondary" routerLink="/specialists">Book another session</a>
+            </div>
+          </section>
+        }
+
+        @if (!submitted) {
         <h1 class="booking-title">🆘 SOS Booking Form</h1>
         <p class="booking-subtitle">Fill out the details below to request a rescue session.</p>
     
@@ -36,6 +52,7 @@
               id="date"
               formControlName="date"
               [min]="minDate"
+              (change)="onDateChange()"
               />
             @if (bookingForm.get('date')?.touched && bookingForm.get('date')?.invalid) {
               <div class="field-error">
@@ -51,7 +68,7 @@
               <option value="" disabled>Select a time slot...</option>
               @for (slot of availableSlots; track slot) {
                 <option [value]="slot">
-                  {{ slot }} (15 min)
+                  {{ slot }} (30 min)
                 </option>
               }
             </select>
@@ -61,6 +78,43 @@
               </div>
             }
           </div>
+
+          @if (bookingForm.get('specialist')?.value && bookingForm.get('date')?.value) {
+            <div class="availability-preview" id="booking-availability-preview">
+              <div class="preview-head">
+                <strong>Availability calendar</strong>
+                @if (availabilityLoading) {
+                  <span>Loading slots...</span>
+                }
+              </div>
+
+              @if (!availabilityLoading) {
+                <div class="slot-grid">
+                  @for (slot of allSlots; track slot) {
+                    <button
+                      type="button"
+                      class="slot-chip"
+                      [class.free]="!bookedSlots.includes(slot)"
+                      [class.busy]="bookedSlots.includes(slot)"
+                      [class.selected]="bookingForm.get('time_slot')?.value === slot"
+                      [disabled]="bookedSlots.includes(slot)"
+                      (click)="selectSlot(slot)"
+                    >
+                      {{ slot }}
+                    </button>
+                  }
+                </div>
+              }
+
+              @if (!availabilityLoading && allSlots.length === 0) {
+                <p class="preview-empty">This specialist has no configured slots for this day.</p>
+              }
+
+              @if (!availabilityLoading && allSlots.length > 0 && availableSlots.length === 0) {
+                <p class="preview-empty">No free slots left for this date. Choose another day.</p>
+              }
+            </div>
+          }
     
           <!-- Description -->
           <div class="form-group">
@@ -93,5 +147,6 @@
             {{ loading ? 'Submitting...' : '📨 Submit SOS Request' }}
           </button>
         </form>
+        }
       </div>
     </div>

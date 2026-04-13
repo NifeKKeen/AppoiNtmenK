@@ -1,0 +1,231 @@
+.specialist-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.hero {
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 1.25rem;
+  background:
+    radial-gradient(circle at 85% 20%, hsla(200, 85%, 55%, 0.18), transparent 45%),
+    linear-gradient(145deg, hsla(210, 35%, 16%, 0.95), hsla(220, 30%, 12%, 0.95));
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 1.7rem;
+}
+
+.hero p {
+  margin: 0.4rem 0 0;
+  color: var(--text-secondary);
+  max-width: 760px;
+}
+
+.panel {
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.panel.warning {
+  border-color: hsla(35, 95%, 55%, 0.35);
+  background: hsla(35, 95%, 55%, 0.08);
+}
+
+.panel.warning h2 {
+  margin-top: 0;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.tools {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: none;
+  border-radius: 10px;
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, hsl(196, 83%, 45%), hsl(210, 80%, 52%));
+  color: white;
+}
+
+.btn.ghost {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.btn.danger {
+  background: hsla(0, 80%, 55%, 0.13);
+  color: hsl(0, 75%, 64%);
+  border: 1px solid hsla(0, 80%, 55%, 0.3);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.grid-wrapper {
+  display: grid;
+  grid-template-columns: 78px repeat(7, minmax(58px, 1fr));
+  gap: 0.35rem;
+  overflow-x: auto;
+}
+
+.day-header {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  padding: 0.2rem 0;
+}
+
+.slot-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+}
+
+.cell {
+  width: 100%;
+  min-height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: hsla(0, 0%, 100%, 0.03);
+}
+
+.cell.active {
+  border-color: hsl(160, 70%, 50%);
+  background: linear-gradient(135deg, hsla(160, 70%, 45%, 0.7), hsla(180, 70%, 45%, 0.7));
+}
+
+.calendar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-weight: 700;
+  background: hsla(0, 0%, 100%, 0.1);
+  color: var(--text-secondary);
+}
+
+.status-pill.connected,
+.status-pill.status-accepted {
+  background: hsla(160, 70%, 50%, 0.16);
+  color: hsl(160, 70%, 62%);
+}
+
+.status-pill.status-pending {
+  background: hsla(45, 95%, 55%, 0.16);
+  color: hsl(45, 95%, 62%);
+}
+
+.status-pill.status-rejected {
+  background: hsla(0, 80%, 55%, 0.16);
+  color: hsl(0, 80%, 65%);
+}
+
+.request-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.request-card {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.8rem;
+  background: hsla(0, 0%, 100%, 0.02);
+}
+
+.request-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.request-head h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.meta {
+  margin: 0.3rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.description {
+  margin: 0.65rem 0;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.muted-text {
+  color: var(--text-muted);
+  margin: 0.3rem 0 0;
+}
+
+.error-text {
+  color: hsl(0, 75%, 66%);
+  margin: 0.5rem 0 0;
+}
+
+.success-text {
+  color: hsl(160, 70%, 60%);
+  margin: 0.5rem 0 0;
+}
+
+@media (max-width: 860px) {
+  .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tools {
+    width: 100%;
+  }
+}

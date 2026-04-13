@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
+import re
 from typing import Dict, Any
 
 from .models import Specialist, Appointment
@@ -16,6 +17,8 @@ SPECIALIST_ROLE_OPTIONS = (
 DEFAULT_SPECIALIST_COLOR = 'hsl(205, 75%, 52%)'
 DEFAULT_SPECIALIST_ICON = '🧠'
 DEFAULT_SPECIALIST_TIME_SLOTS = ['09:00', '09:30', '10:00', '10:30']
+WEEKDAY_KEYS = ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun')
+TIME_SLOT_PATTERN = re.compile(r'^([01]\d|2[0-3]):[0-5]\d$')
 
 
 def _build_unique_specialist_slug(base_slug: str) -> str:
@@ -26,6 +29,11 @@ def _build_unique_specialist_slug(base_slug: str) -> str:
         candidate = f'{base}-{index}'
         index += 1
     return candidate
+
+
+def build_default_weekly_availability(slots: list[str] | None = None) -> Dict[str, list[str]]:
+    base_slots = list(slots or DEFAULT_SPECIALIST_TIME_SLOTS)
+    return {day: list(base_slots) for day in WEEKDAY_KEYS}
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -41,7 +49,49 @@ class SpecialistProfileSerializer(serializers.ModelSerializer):
         model = Specialist
         fields = [
             'id', 'name', 'slug', 'role', 'description',
-            'color', 'icon', 'avatar_url', 'time_slots', 'is_active'
+            'color', 'icon', 'avatar_url', 'time_slots',
+            'weekly_availability', 'google_calendar_connected', 'is_active'
+        ]
+
+
+class SpecialistAvailabilitySerializer(serializers.Serializer):
+    weekly_availability = serializers.DictField(
+        child=serializers.ListField(child=serializers.CharField()),
+    )
+
+    def validate_weekly_availability(self, value: Dict[str, Any]) -> Dict[str, list[str]]:
+        normalized: Dict[str, list[str]] = {day: [] for day in WEEKDAY_KEYS}
+
+        for day, slots in value.items():
+            if day not in WEEKDAY_KEYS:
+                raise serializers.ValidationError(f'Invalid weekday key: {day}')
+            if not isinstance(slots, list):
+                raise serializers.ValidationError(f'Slots for {day} must be a list.')
+
+            clean_slots: list[str] = []
+            for slot in slots:
+                slot_str = str(slot).strip()
+                if not TIME_SLOT_PATTERN.match(slot_str):
+                    raise serializers.ValidationError(
+                        f'Invalid time slot format: {slot_str}. Use HH:MM.'
+                    )
+                clean_slots.append(slot_str)
+
+            normalized[day] = sorted(list(set(clean_slots)))
+
+        return normalized
+
+
+class SpecialistRequestSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='user.username', read_only=True)
+    student_email = serializers.CharField(source='user.email', read_only=True)
+
+    class Meta:
+        model = Appointment
+        fields = [
+            'id', 'student_name', 'student_email',
+            'date', 'time_slot', 'description',
+            'status', 'created_at'
         ]
 
 
@@ -127,6 +177,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                 icon=specialist_icon or DEFAULT_SPECIALIST_ICON,
                 color=DEFAULT_SPECIALIST_COLOR,
                 time_slots=DEFAULT_SPECIALIST_TIME_SLOTS,
+                weekly_availability=build_default_weekly_availability(),
             )
 
         return user
@@ -160,6 +211,7 @@ class UpgradeToSpecialistSerializer(serializers.Serializer):
                 icon=specialist_icon,
                 color=DEFAULT_SPECIALIST_COLOR,
                 time_slots=DEFAULT_SPECIALIST_TIME_SLOTS,
+                weekly_availability=build_default_weekly_availability(),
             )
         else:
             profile.name = user.username
@@ -181,7 +233,7 @@ class SpecialistSerializer(serializers.ModelSerializer):
         model = Specialist
         fields = [
             'id', 'name', 'slug', 'role', 'description',
-            'color', 'icon', 'avatar_url', 'time_slots', 'is_active'
+            'color', 'icon', 'avatar_url', 'time_slots', 'weekly_availability', 'is_active'
         ]
 
 
@@ -189,12 +241,35 @@ class AppointmentSerializer(serializers.ModelSerializer):
     specialist_name = serializers.CharField(source='specialist.name', read_only=True)
     specialist_color = serializers.CharField(source='specialist.color', read_only=True)
     specialist_icon = serializers.CharField(source='specialist.icon', read_only=True)
+    specialist_slug = serializers.CharField(source='specialist.slug', read_only=True)
+
+    def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
+        specialist = attrs.get('specialist')
+        date = attrs.get('date')
+        time_slot = attrs.get('time_slot')
+
+        if specialist is None or date is None or time_slot is None:
+            return attrs
+
+        weekly = specialist.weekly_availability or {}
+        weekday_key = WEEKDAY_KEYS[date.weekday()]
+        if weekday_key in weekly:
+            day_slots = weekly.get(weekday_key, [])
+        else:
+            day_slots = specialist.time_slots or []
+
+        if time_slot not in day_slots:
+            raise serializers.ValidationError(
+                {'time_slot': 'This time is not available for the selected specialist on that day.'}
+            )
+
+        return attrs
 
     class Meta:
         model = Appointment
         fields = [
             'id', 'user', 'specialist', 'specialist_name',
-            'specialist_color', 'specialist_icon',
+            'specialist_color', 'specialist_icon', 'specialist_slug',
             'date', 'time_slot', 'description', 'status', 'created_at'
         ]
         read_only_fields = ['user', 'status']

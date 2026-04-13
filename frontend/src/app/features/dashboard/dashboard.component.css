@@ -140,6 +140,22 @@
   font-size: 0.85rem;
 }
 
+.specialist-desk-link {
+  margin-left: auto;
+  border: 1px solid hsla(60, 90%, 60%, 0.55);
+  background: hsla(60, 90%, 60%, 0.16);
+  color: hsl(60, 95%, 70%);
+  border-radius: 10px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.specialist-desk-link:hover {
+  background: hsla(60, 90%, 60%, 0.22);
+}
+
 .error-msg {
   color: hsl(0, 80%, 65%);
   border: 1px solid hsla(0, 80%, 55%, 0.3);
