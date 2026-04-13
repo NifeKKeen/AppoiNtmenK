@@ -5,7 +5,13 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from .views import RegisterView, SpecialistViewSet, AppointmentViewSet
+from .views import (
+    RegisterView,
+    SpecialistViewSet,
+    AppointmentViewSet,
+    ProfileView,
+    UpgradeToSpecialistView,
+)
 
 router = DefaultRouter()
 router.register(r'specialists', SpecialistViewSet, basename='specialist')
@@ -15,5 +21,7 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('profile/', ProfileView.as_view(), name='profile'),
+    path('profile/upgrade-specialist/', UpgradeToSpecialistView.as_view(), name='upgrade_specialist'),
     path('', include(router.urls)),
 ]

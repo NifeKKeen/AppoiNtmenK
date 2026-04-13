@@ -9,6 +9,8 @@ from .serializers import (
     RegisterSerializer,
     SpecialistSerializer,
     AppointmentSerializer,
+    UserProfileSerializer,
+    UpgradeToSpecialistSerializer,
 )
 
 User = get_user_model()
@@ -20,11 +22,26 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
 
-    def create(self, request: Any, *args: Any, **kwargs: Any) -> Response:
-        try:
-            return super().create(request, *args, **kwargs)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class ProfileView(generics.RetrieveAPIView):
+    """Authenticated endpoint for current user profile and role flags."""
+    serializer_class = UserProfileSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self) -> Any:
+        return self.request.user
+
+
+class UpgradeToSpecialistView(generics.GenericAPIView):
+    """Upgrade a logged-in user account to specialist and create profile data."""
+    serializer_class = UpgradeToSpecialistSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request: Any, *args: Any, **kwargs: Any) -> Response:
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response(UserProfileSerializer(user).data, status=status.HTTP_200_OK)
 
 
 class SpecialistViewSet(viewsets.ReadOnlyModelViewSet):

@@ -4,8 +4,21 @@ from django.conf import settings
 
 
 class User(AbstractUser):
-    """Custom user model for future extensibility."""
-    pass
+    """Custom user model with explicit account role."""
+
+    class Role(models.TextChoices):
+        USER = 'USER', 'User'
+        SPECIALIST = 'SPECIALIST', 'Specialist'
+
+    role = models.CharField(
+        max_length=20,
+        choices=Role.choices,
+        default=Role.USER,
+    )
+
+    @property
+    def is_specialist(self) -> bool:
+        return self.role == self.Role.SPECIALIST
 
 
 class Specialist(models.Model):
@@ -14,16 +27,42 @@ class Specialist(models.Model):
     available time slots) is served from this model so the frontend 
     never hardcodes specialist information.
     """
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='specialist_profile',
+        null=True,
+        blank=True,
+    )
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     role = models.CharField(max_length=200)
     description = models.TextField()
-    color = models.CharField(max_length=50, help_text="CSS color value, e.g. hsl(270, 70%, 60%)")
-    icon = models.CharField(max_length=10, help_text="Emoji icon for the specialist")
+    color = models.CharField(
+        max_length=50,
+        default='hsl(205, 75%, 52%)',
+        help_text="CSS color value, e.g. hsl(270, 70%, 60%)",
+    )
+    icon = models.CharField(
+        max_length=10,
+        default='🧠',
+        help_text="Emoji icon for the specialist",
+    )
     avatar_url = models.URLField(blank=True, default='')
     time_slots = models.JSONField(
+        default=list,
+        blank=True,
         help_text='List of available time slot strings, e.g. ["09:00","09:15","09:30"]'
     )
+    weekly_availability = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text='Map weekdays to list of available slots, e.g. {"mon": ["09:00", "09:30"]}',
+    )
+    google_calendar_connected = models.BooleanField(default=False)
+    google_access_token = models.TextField(blank=True, default='')
+    google_refresh_token = models.TextField(blank=True, default='')
+    google_token_expiry = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -41,6 +80,8 @@ class Appointment(models.Model):
     """
     STATUS_CHOICES = [
         ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
         ('confirmed', 'Confirmed'),
         ('completed', 'Completed'),
     ]
