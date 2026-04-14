@@ -4,21 +4,9 @@ from django.conf import settings
 
 
 class User(AbstractUser):
-    """Custom user model with explicit account role."""
+    """Custom user model with specialist flag."""
 
-    class Role(models.TextChoices):
-        USER = 'USER', 'User'
-        SPECIALIST = 'SPECIALIST', 'Specialist'
-
-    role = models.CharField(
-        max_length=20,
-        choices=Role.choices,
-        default=Role.USER,
-    )
-
-    @property
-    def is_specialist(self) -> bool:
-        return self.role == self.Role.SPECIALIST
+    is_specialist = models.BooleanField(default=False)
 
 
 class Specialist(models.Model):

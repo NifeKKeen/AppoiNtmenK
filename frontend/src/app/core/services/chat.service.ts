@@ -8,7 +8,7 @@ export interface ChatMessage {
   appointment: number;
   sender: number;
   sender_username: string;
-  sender_role: 'USER' | 'SPECIALIST';
+  sender_is_specialist: boolean;
   body: string;
   created_at: string;
 }

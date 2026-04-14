@@ -4,8 +4,8 @@ from .models import User, Specialist, Appointment, ChatMessage
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['username', 'email', 'role', 'is_staff']
-    list_filter = ['role', 'is_staff']
+    list_display = ['username', 'email', 'is_specialist', 'is_staff']
+    list_filter = ['is_specialist', 'is_staff']
 
 
 @admin.register(Specialist)

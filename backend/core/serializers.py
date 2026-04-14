@@ -37,11 +37,9 @@ def build_default_weekly_availability(slots: list[str] | None = None) -> Dict[st
 
 
 class UserSerializer(serializers.ModelSerializer):
-    is_specialist = serializers.BooleanField(read_only=True)
-
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'is_specialist']
+        fields = ['id', 'username', 'email', 'is_specialist']
 
 
 class SpecialistProfileSerializer(serializers.ModelSerializer):
@@ -96,13 +94,12 @@ class SpecialistRequestSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    is_specialist = serializers.BooleanField(read_only=True)
     specialist_profile = SpecialistProfileSerializer(read_only=True)
 
     class Meta:
         model = User
         fields = [
-            'id', 'username', 'email', 'role',
+            'id', 'username', 'email',
             'is_specialist', 'specialist_profile'
         ]
 
@@ -165,8 +162,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
 
         if become_specialist:
-            user.role = User.Role.SPECIALIST
-            user.save(update_fields=['role'])
+            user.is_specialist = True
+            user.save(update_fields=['is_specialist'])
             slug = _build_unique_specialist_slug(slugify(user.username) or f'user-{user.pk}')
             Specialist.objects.create(
                 user=user,
@@ -220,9 +217,9 @@ class UpgradeToSpecialistSerializer(serializers.Serializer):
             profile.icon = specialist_icon
             profile.save(update_fields=['name', 'role', 'description', 'icon'])
 
-        if user.role != User.Role.SPECIALIST:
-            user.role = User.Role.SPECIALIST
-            user.save(update_fields=['role'])
+        if not user.is_specialist:
+            user.is_specialist = True
+            user.save(update_fields=['is_specialist'])
 
         return user
 
@@ -277,12 +274,12 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
 class ChatMessageSerializer(serializers.ModelSerializer):
     sender_username = serializers.CharField(source='sender.username', read_only=True)
-    sender_role = serializers.CharField(source='sender.role', read_only=True)
+    sender_is_specialist = serializers.BooleanField(source='sender.is_specialist', read_only=True)
 
     class Meta:
         model = ChatMessage
         fields = [
             'id', 'appointment', 'sender', 'sender_username',
-            'sender_role', 'body', 'created_at',
+            'sender_is_specialist', 'body', 'created_at',
         ]
         read_only_fields = ['appointment', 'sender', 'created_at']

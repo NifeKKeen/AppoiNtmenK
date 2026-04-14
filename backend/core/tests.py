@@ -20,7 +20,7 @@ class SpecialistAccountFlowTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         user = User.objects.get(username='plain-user')
-        self.assertEqual(user.role, User.Role.USER)
+        self.assertFalse(user.is_specialist)
         self.assertFalse(Specialist.objects.filter(user=user).exists())
 
     def test_register_specialist_creates_profile(self) -> None:
@@ -38,7 +38,7 @@ class SpecialistAccountFlowTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         user = User.objects.get(username='hero-user')
-        self.assertEqual(user.role, User.Role.SPECIALIST)
+        self.assertTrue(user.is_specialist)
 
         profile = Specialist.objects.get(user=user)
         self.assertEqual(profile.role, 'Code Debugger')
@@ -64,7 +64,7 @@ class SpecialistAccountFlowTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         user.refresh_from_db()
-        self.assertEqual(user.role, User.Role.SPECIALIST)
+        self.assertTrue(user.is_specialist)
         self.assertTrue(Specialist.objects.filter(user=user).exists())
 
     def test_register_specialist_requires_role_and_description(self) -> None:
@@ -88,7 +88,7 @@ class SpecialistAccountFlowTests(APITestCase):
             username='specialist-availability',
             email='specialist-availability@example.com',
             password='secret-pass-123',
-            role=User.Role.SPECIALIST,
+            is_specialist=True,
         )
         Specialist.objects.create(
             user=specialist_user,
@@ -128,7 +128,7 @@ class SpecialistAccountFlowTests(APITestCase):
             username='specialist-actions',
             email='specialist-actions@example.com',
             password='secret-pass-123',
-            role=User.Role.SPECIALIST,
+            is_specialist=True,
         )
         specialist = Specialist.objects.create(
             user=specialist_user,
@@ -184,7 +184,7 @@ class SpecialistAccountFlowTests(APITestCase):
             username='spec-daily',
             email='spec-daily@example.com',
             password='secret-pass-123',
-            role=User.Role.SPECIALIST,
+            is_specialist=True,
         )
         specialist = Specialist.objects.create(
             user=specialist_user,
@@ -231,7 +231,7 @@ class SpecialistAccountFlowTests(APITestCase):
             username='spec-filter',
             email='spec-filter@example.com',
             password='secret-pass-123',
-            role=User.Role.SPECIALIST,
+            is_specialist=True,
         )
         specialist = Specialist.objects.create(
             user=specialist_user,

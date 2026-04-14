@@ -85,7 +85,7 @@ class IsSpecialistPermission(BasePermission):
         return bool(
             user
             and user.is_authenticated
-            and user.role == User.Role.SPECIALIST
+            and user.is_specialist
             and hasattr(user, 'specialist_profile')
         )
 

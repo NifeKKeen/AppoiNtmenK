@@ -53,10 +53,9 @@
             <div class="bubble-header">
               <span class="sender-name">
                 {{ msg.sender_username }}
-                @if (msg.sender_role === 'SPECIALIST') {
+                @if (msg.sender_is_specialist) {
                   <span class="role-badge specialist-badge">Specialist</span>
-                }
-                @if (msg.sender_role === 'USER') {
+                } @else {
                   <span class="role-badge user-badge">User</span>
                 }
               </span>
