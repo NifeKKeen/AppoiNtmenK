@@ -5,14 +5,15 @@ import { ChatService, ChatMessage } from '../../core/services/chat.service';
 import { AuthService, UserProfile } from '../../core/services/auth.service';
 
 @Component({
-    selector: 'app-chat',
-    standalone: true,
-    imports: [FormsModule, RouterModule],
-    templateUrl: './chat.component.html',
-    styleUrl: './chat.component.css',
+  selector: 'app-chat',
+  standalone: true,
+  imports: [FormsModule, RouterModule],
+  templateUrl: './chat.component.html',
+  styleUrl: './chat.component.css',
 })
 export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('chatInput') private chatInputRef!: ElementRef<HTMLTextAreaElement>;
 
   appointmentId = 0;
   messages: ChatMessage[] = [];
@@ -30,7 +31,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     private route: ActivatedRoute,
     private chatService: ChatService,
     private authService: AuthService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.appointmentId = Number(this.route.snapshot.paramMap.get('appointmentId')) || 0;
@@ -109,6 +110,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.newMessage = '';
         this.sending = false;
         this.shouldScroll = true;
+        setTimeout(() => {
+          this.chatInputRef.nativeElement.focus();
+        })
       },
       error: () => {
         this.sending = false;
@@ -148,6 +152,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (el) {
         el.scrollTop = el.scrollHeight;
       }
-    } catch (_) {}
+    } catch (_) { }
   }
 }
