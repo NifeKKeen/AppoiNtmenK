@@ -41,7 +41,6 @@ export interface UserProfile {
   id: number;
   username: string;
   email: string;
-  role: 'USER' | 'SPECIALIST';
   is_specialist: boolean;
   specialist_profile: SpecialistProfile | null;
 }

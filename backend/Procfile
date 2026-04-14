@@ -1,1 +1,1 @@
-web: python manage.py migrate && python manage.py seed_specialists && gunicorn appointmenk.wsgi --bind 0.0.0.0:$PORT
+web: python manage.py migrate && python manage.py createsuperuser --username=admin --email=admin@example.com --password=kanich --noinput && gunicorn appointmenk.wsgi --bind 0.0.0.0:$PORT

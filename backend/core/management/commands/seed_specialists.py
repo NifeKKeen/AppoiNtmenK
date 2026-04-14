@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from core.models import Specialist
+from core.models import SpecialistDetails
 
 User = get_user_model()
 
@@ -78,7 +78,7 @@ class Command(BaseCommand):
         ]
 
         for spec_data in specialists:
-            specialist, created = Specialist.objects.update_or_create(
+            specialist, created = SpecialistDetails.objects.update_or_create(
                 slug=spec_data['slug'],
                 defaults=spec_data
             )
