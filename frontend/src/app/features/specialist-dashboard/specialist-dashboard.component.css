@@ -129,12 +129,6 @@
   background: linear-gradient(135deg, hsla(160, 70%, 45%, 0.7), hsla(180, 70%, 45%, 0.7));
 }
 
-.calendar-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .status-pill {
   display: inline-block;
   padding: 0.2rem 0.55rem;
@@ -147,7 +141,6 @@
   color: var(--text-secondary);
 }
 
-.status-pill.connected,
 .status-pill.status-accepted {
   background: hsla(160, 70%, 50%, 0.16);
   color: hsl(160, 70%, 62%);
@@ -224,6 +217,25 @@
 .error-text {
   color: hsl(0, 75%, 66%);
   margin: 0.5rem 0 0;
+}
+
+.setup-note {
+  border: 1px solid hsla(35, 95%, 55%, 0.35);
+  background: hsla(35, 95%, 55%, 0.09);
+  border-radius: 10px;
+  padding: 0.7rem 0.8rem;
+  color: hsl(35, 95%, 72%);
+  margin-top: 0.4rem;
+}
+
+.setup-note p {
+  margin: 0.25rem 0;
+  font-size: 0.86rem;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, monospace;
+  color: var(--text-primary);
 }
 
 .success-text {

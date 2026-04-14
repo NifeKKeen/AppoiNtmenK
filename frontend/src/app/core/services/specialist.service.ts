@@ -45,6 +45,8 @@ export interface GoogleCalendarConnectResponse {
 export interface GoogleCalendarStatus {
   connected: boolean;
   configured: boolean;
+  missing_vars?: string[];
+  oauth_redirect_uri?: string;
 }
 
 export interface SpecialistDayAvailability {

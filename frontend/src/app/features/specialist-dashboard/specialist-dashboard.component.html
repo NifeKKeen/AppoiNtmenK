@@ -1,7 +1,7 @@
 <div class="specialist-dashboard">
   <header class="hero">
     <h1>Specialist Private Dashboard</h1>
-    <p>Manage weekly availability, handle incoming SOS requests, and sync rescue sessions with Google Calendar.</p>
+    <p>Manage weekly availability and handle incoming SOS requests.</p>
   </header>
 
   @if (profileLoading) {
@@ -17,39 +17,6 @@
   }
 
   @if (!profileLoading && profile?.is_specialist) {
-    <section class="panel calendar-panel" id="google-calendar-panel">
-      <div class="panel-header">
-        <h2>Google Calendar</h2>
-      </div>
-
-      @if (googleLoading) {
-        <p class="muted-text">Checking calendar connection...</p>
-      }
-
-      @if (!googleLoading && googleStatus?.configured === false) {
-        <p class="error-text">Google OAuth is not configured on the backend. Set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET and GOOGLE_OAUTH_REDIRECT_URI.</p>
-      }
-
-      @if (!googleLoading && googleStatus?.configured) {
-        <div class="calendar-actions">
-          @if (!googleStatus?.connected) {
-            <button class="btn primary" (click)="connectGoogleCalendar()">Connect Google Calendar</button>
-          }
-          @if (googleStatus?.connected) {
-            <span class="status-pill connected">Connected</span>
-            <button class="btn ghost" (click)="disconnectGoogleCalendar()">Disconnect</button>
-          }
-        </div>
-      }
-
-      @if (googleMessage) {
-        <p class="success-text">{{ googleMessage }}</p>
-      }
-      @if (googleError) {
-        <p class="error-text">{{ googleError }}</p>
-      }
-    </section>
-
     <section class="panel availability-panel" id="availability-manager">
       <div class="panel-header">
         <h2>Availability Manager</h2>
