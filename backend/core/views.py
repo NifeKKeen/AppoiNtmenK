@@ -23,7 +23,7 @@ from .google_calendar import (
     is_google_oauth_configured,
     store_tokens_on_specialist,
 )
-from .models import Appointment, ChatMessage, Specialist
+from .models import Appointment, ChatMessage, SpecialistDetails
 from .serializers import (
     AppointmentSerializer,
     ChatMessageSerializer,
@@ -46,7 +46,7 @@ def _weekday_key(value: date) -> str:
     return WEEKDAY_KEYS[value.weekday()]
 
 
-def _specialist_day_slots(specialist: Specialist, day: date) -> list[str]:
+def _specialist_day_slots(specialist: SpecialistDetails, day: date) -> list[str]:
     weekly = specialist.weekly_availability or {}
     key = _weekday_key(day)
 
@@ -59,7 +59,7 @@ def _specialist_day_slots(specialist: Specialist, day: date) -> list[str]:
     return list(build_default_weekly_availability().get(key, []))
 
 
-def _booked_slots_for_day(specialist: Specialist, day: date) -> list[str]:
+def _booked_slots_for_day(specialist: SpecialistDetails, day: date) -> list[str]:
     booked = (
         Appointment.objects
         .filter(specialist=specialist, date=day, status__in=BOOKED_STATUSES)
@@ -133,7 +133,7 @@ class SpecialistViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'slug'
 
     def get_queryset(self) -> Any:
-        return Specialist.objects.filter(is_active=True)
+        return SpecialistDetails.objects.filter(is_active=True)
 
 
 class SpecialistDailyAvailabilityView(APIView):
@@ -145,7 +145,7 @@ class SpecialistDailyAvailabilityView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request: Any, slug: str) -> Response:
-        specialist = get_object_or_404(Specialist.objects.filter(is_active=True), slug=slug)
+        specialist = get_object_or_404(SpecialistDetails.objects.filter(is_active=True), slug=slug)
 
         raw_date = request.query_params.get('date')
         target_date = parse_date(raw_date) if raw_date else date.today()
@@ -201,7 +201,7 @@ class AvailabilityCalendarView(APIView):
         time_from = (request.query_params.get('time_from') or '').strip() or None
         time_to = (request.query_params.get('time_to') or '').strip() or None
 
-        specialists_qs = Specialist.objects.filter(is_active=True)
+        specialists_qs = SpecialistDetails.objects.filter(is_active=True)
         if specialist_slug:
             specialists_qs = specialists_qs.filter(slug=specialist_slug)
 
@@ -273,7 +273,7 @@ class SpecialistAvailabilityView(APIView):
     permission_classes = [IsAuthenticated, IsSpecialistPermission]
 
     @staticmethod
-    def _default_weekly_availability(specialist: Specialist) -> dict[str, list[str]]:
+    def _default_weekly_availability(specialist: SpecialistDetails) -> dict[str, list[str]]:
         weekly = specialist.weekly_availability or {}
         defaults = {day: [] for day in WEEKDAY_KEYS}
         if not weekly and specialist.time_slots:

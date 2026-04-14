@@ -4,15 +4,10 @@ from django.utils.text import slugify
 import re
 from typing import Dict, Any
 
-from .models import Specialist, Appointment, ChatMessage
+from .models import SpecialistDetails, Appointment, ChatMessage
 
 User = get_user_model()
 
-SPECIALIST_ROLE_OPTIONS = (
-    'Math Whisperer',
-    'Tourist-Consultant',
-    'Code Debugger',
-)
 
 DEFAULT_SPECIALIST_COLOR = 'hsl(205, 75%, 52%)'
 DEFAULT_SPECIALIST_ICON = '🧠'
@@ -25,7 +20,7 @@ def _build_unique_specialist_slug(base_slug: str) -> str:
     base = base_slug or 'specialist'
     candidate = base
     index = 2
-    while Specialist.objects.filter(slug=candidate).exists():
+    while SpecialistDetails.objects.filter(slug=candidate).exists():
         candidate = f'{base}-{index}'
         index += 1
     return candidate
@@ -44,7 +39,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class SpecialistProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Specialist
+        model = SpecialistDetails
         fields = [
             'id', 'name', 'slug', 'role', 'description',
             'color', 'icon', 'avatar_url', 'time_slots',
@@ -107,10 +102,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     become_specialist = serializers.BooleanField(write_only=True, required=False, default=False)
-    specialist_role = serializers.ChoiceField(
-        choices=SPECIALIST_ROLE_OPTIONS,
+    specialist_role = serializers.CharField(
         write_only=True,
         required=False,
+        max_length=200,
     )
     specialist_description = serializers.CharField(write_only=True, required=False)
     specialist_icon = serializers.CharField(
@@ -165,7 +160,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             user.is_specialist = True
             user.save(update_fields=['is_specialist'])
             slug = _build_unique_specialist_slug(slugify(user.username) or f'user-{user.pk}')
-            Specialist.objects.create(
+            SpecialistDetails.objects.create(
                 user=user,
                 name=user.username,
                 slug=slug,
@@ -181,7 +176,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class UpgradeToSpecialistSerializer(serializers.Serializer):
-    specialist_role = serializers.ChoiceField(choices=SPECIALIST_ROLE_OPTIONS)
+    specialist_role = serializers.CharField(max_length=200)
     specialist_description = serializers.CharField()
     specialist_icon = serializers.CharField(required=False, allow_blank=True, max_length=10)
 
@@ -199,7 +194,7 @@ class UpgradeToSpecialistSerializer(serializers.Serializer):
 
         profile = getattr(user, 'specialist_profile', None)
         if profile is None:
-            profile = Specialist.objects.create(
+            profile = SpecialistDetails.objects.create(
                 user=user,
                 name=user.username,
                 slug=_build_unique_specialist_slug(slugify(user.username) or f'user-{user.pk}'),
@@ -227,7 +222,7 @@ class UpgradeToSpecialistSerializer(serializers.Serializer):
 class SpecialistSerializer(serializers.ModelSerializer):
     """Read-only serializer for specialist profiles, including time_slots."""
     class Meta:
-        model = Specialist
+        model = SpecialistDetails
         fields = [
             'id', 'name', 'slug', 'role', 'description',
             'color', 'icon', 'avatar_url', 'time_slots', 'weekly_availability', 'is_active'

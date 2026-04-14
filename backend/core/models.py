@@ -9,11 +9,12 @@ class User(AbstractUser):
     is_specialist = models.BooleanField(default=False)
 
 
-class Specialist(models.Model):
+class SpecialistDetails(models.Model):
     """
-    Dynamic specialist profile. All UI-facing data (name, role, color, 
+    Specialist details profile. All UI-facing data (name, role, color, 
     available time slots) is served from this model so the frontend 
     never hardcodes specialist information.
+    When user.is_specialist is True, this table holds their details.
     """
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -56,6 +57,8 @@ class Specialist(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name = 'Specialist Details'
+        verbose_name_plural = 'Specialist Details'
 
     def __str__(self) -> str:
         return f"{self.name} — {self.role}"
@@ -63,7 +66,7 @@ class Specialist(models.Model):
 
 class Appointment(models.Model):
     """
-    Core booking entity. Links a student (User) to a Specialist 
+    Core booking entity. Links a student (User) to a SpecialistDetails 
     with a date, time slot, and description of their emergency.
     """
     STATUS_CHOICES = [
@@ -80,7 +83,7 @@ class Appointment(models.Model):
         related_name='appointments'
     )
     specialist = models.ForeignKey(
-        Specialist,
+        SpecialistDetails,
         on_delete=models.CASCADE,
         related_name='appointments'
     )

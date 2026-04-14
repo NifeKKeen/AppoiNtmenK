@@ -20,11 +20,6 @@ export class RegisterComponent {
   specialistDescription = '';
   specialistIcon = '🧠';
 
-  readonly specialistRoles = [
-    'Math Whisperer',
-    'Tourist-Consultant',
-    'Code Debugger',
-  ];
 
   readonly iconOptions = ['🧠', '💻', '🧭', '🧮', '🧑‍🏫', '🛟'];
 
@@ -45,7 +40,7 @@ export class RegisterComponent {
   onRegister() {
     if (
       this.becomeSpecialist &&
-      (!this.specialistRole || !this.specialistDescription.trim())
+      (!this.specialistRole.trim() || !this.specialistDescription.trim())
     ) {
       this.error = 'Для регистрации специалиста нужно заполнить роль и описание.';
       return;

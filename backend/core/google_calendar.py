@@ -8,7 +8,7 @@ from urllib.error import HTTPError, URLError
 from django.conf import settings
 from django.utils import timezone
 
-from .models import Specialist
+from .models import SpecialistDetails
 
 
 GOOGLE_OAUTH_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth'
@@ -92,7 +92,7 @@ def exchange_code_for_tokens(code: str) -> Dict[str, Any]:
         raise GoogleCalendarError(f'Failed to exchange code for tokens: {body}') from exc
 
 
-def store_tokens_on_specialist(specialist: Specialist, token_data: Dict[str, Any]) -> None:
+def store_tokens_on_specialist(specialist: SpecialistDetails, token_data: Dict[str, Any]) -> None:
     access_token = token_data.get('access_token', '')
     refresh_token = token_data.get('refresh_token', '')
     expires_in = int(token_data.get('expires_in', 0) or 0)
@@ -112,7 +112,7 @@ def store_tokens_on_specialist(specialist: Specialist, token_data: Dict[str, Any
     )
 
 
-def _refresh_access_token(specialist: Specialist) -> str:
+def _refresh_access_token(specialist: SpecialistDetails) -> str:
     if not specialist.google_refresh_token:
         raise GoogleCalendarError('No refresh token available for Google Calendar.')
 
@@ -145,7 +145,7 @@ def _refresh_access_token(specialist: Specialist) -> str:
         raise GoogleCalendarError(f'Failed to refresh Google access token: {body}') from exc
 
 
-def get_valid_access_token(specialist: Specialist) -> str:
+def get_valid_access_token(specialist: SpecialistDetails) -> str:
     if not specialist.google_access_token:
         raise GoogleCalendarError('Google Calendar is not connected.')
 
@@ -155,7 +155,7 @@ def get_valid_access_token(specialist: Specialist) -> str:
     return specialist.google_access_token
 
 
-def create_google_calendar_event(specialist: Specialist, event_payload: Dict[str, Any]) -> Dict[str, Any]:
+def create_google_calendar_event(specialist: SpecialistDetails, event_payload: Dict[str, Any]) -> Dict[str, Any]:
     token = get_valid_access_token(specialist)
     headers = {
         'Authorization': f'Bearer {token}',
