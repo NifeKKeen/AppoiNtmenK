@@ -1,0 +1,76 @@
+<div class="chat-list-page" id="chat-list-page">
+  <div class="chat-list-header">
+    <h1>💬 Chats</h1>
+    <p class="subtitle">Your conversations</p>
+  </div>
+
+  @if (loading) {
+    <div class="chat-list-loading">
+      <div class="spinner"></div>
+      <p>Loading conversations...</p>
+    </div>
+  }
+
+  @if (!loading && appointments.length === 0 && specialistRequests.length === 0) {
+    <div class="chat-list-empty">
+      <div class="empty-icon">💬</div>
+      <h2>No conversations yet</h2>
+      <p>Book an appointment to start chatting with a specialist.</p>
+      <a routerLink="/book" class="btn btn-primary">🆘 Book Now</a>
+    </div>
+  }
+
+  @if (!loading && appointments.length > 0) {
+    <section class="chat-section">
+      <h2 class="section-title">My Appointments</h2>
+      <div class="conversation-list">
+        @for (appt of appointments; track appt.id) {
+          <a
+            [routerLink]="['/chat', appt.id]"
+            class="conversation-card"
+            [id]="'chat-appt-' + appt.id"
+          >
+            <div class="conv-icon" [style.background]="appt.specialist_color">
+              {{ appt.specialist_icon }}
+            </div>
+            <div class="conv-info">
+              <div class="conv-name">{{ appt.specialist_name }}</div>
+              <div class="conv-meta">
+                {{ formatDate(appt.date) }} · {{ appt.time_slot }}
+                <span class="status-pill" [class]="'status-' + appt.status">{{ appt.status }}</span>
+              </div>
+              <div class="conv-desc">{{ appt.description }}</div>
+            </div>
+            <div class="conv-arrow">→</div>
+          </a>
+        }
+      </div>
+    </section>
+  }
+
+  @if (!loading && specialistRequests.length > 0) {
+    <section class="chat-section">
+      <h2 class="section-title">Specialist Inbox</h2>
+      <div class="conversation-list">
+        @for (req of specialistRequests; track req.id) {
+          <a
+            [routerLink]="['/chat', req.id]"
+            class="conversation-card"
+            [id]="'chat-req-' + req.id"
+          >
+            <div class="conv-icon student-icon">🎓</div>
+            <div class="conv-info">
+              <div class="conv-name">{{ req.student_name }}</div>
+              <div class="conv-meta">
+                {{ formatDate(req.date) }} · {{ req.time_slot }}
+                <span class="status-pill" [class]="'status-' + req.status">{{ req.status }}</span>
+              </div>
+              <div class="conv-desc">{{ req.description }}</div>
+            </div>
+            <div class="conv-arrow">→</div>
+          </a>
+        }
+      </div>
+    </section>
+  }
+</div>

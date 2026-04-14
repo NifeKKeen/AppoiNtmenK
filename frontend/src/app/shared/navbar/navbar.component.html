@@ -5,16 +5,9 @@
             Appo<span class="brand-i">i</span>NtmenK
           </a>
           <div class="nav-links">
-            @for (spec of specialists; track spec) {
-              <a
-                [routerLink]="['/specialists', spec.slug]"
-                routerLinkActive="active"
-                class="nav-link"
-                [id]="'nav-specialist-' + spec.slug"
-                >
-                {{ spec.icon }} {{ spec.name }}
-              </a>
-            }
+            <a routerLink="/specialists" routerLinkActive="active" class="nav-link" id="nav-specialists">
+              👥 Specialists
+            </a>
             <a routerLink="/book" routerLinkActive="active" class="nav-link" id="nav-book">
               🆘 Book
             </a>
@@ -23,6 +16,9 @@
             </a>
             <a routerLink="/dashboard" routerLinkActive="active" class="nav-link" id="nav-dashboard">
               📋 My Requests
+            </a>
+            <a routerLink="/chats" routerLinkActive="active" class="nav-link" id="nav-chats">
+              💬 Chats
             </a>
             @if (isSpecialist) {
               <a routerLink="/specialist/dashboard" routerLinkActive="active" class="nav-link" id="nav-specialist-dashboard">

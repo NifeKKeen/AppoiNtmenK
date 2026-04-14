@@ -9,6 +9,7 @@ import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { SpecialistDashboardComponent } from './features/specialist-dashboard/specialist-dashboard.component';
 import { AvailabilityCalendarComponent } from './features/availability-calendar/availability-calendar.component';
 import { ChatComponent } from './features/chat/chat.component';
+import { ChatListComponent } from './features/chat-list/chat-list.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'calendar', component: AvailabilityCalendarComponent, canActivate: [authGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'specialist/dashboard', component: SpecialistDashboardComponent, canActivate: [authGuard] },
+  { path: 'chats', component: ChatListComponent, canActivate: [authGuard] },
   { path: 'chat/:appointmentId', component: ChatComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: '' },
 ];
