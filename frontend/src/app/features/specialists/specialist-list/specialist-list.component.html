@@ -18,7 +18,7 @@
             <p class="spec-role">{{ spec.role }}</p>
             <p class="spec-desc">{{ spec.description | slice:0:150 }}...</p>
             <div class="spec-meta">
-              <span class="spec-slots">{{ spec.time_slots.length }} time slots</span>
+              <span class="spec-slots">{{ getSlotCount(spec) }} slots this week</span>
               <span class="spec-arrow">→</span>
             </div>
           </a>

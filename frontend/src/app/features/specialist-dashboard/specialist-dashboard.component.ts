@@ -90,20 +90,6 @@ export class SpecialistDashboardComponent implements OnInit {
     });
   }
 
-  copyFirstDayToWeek(): void {
-    const sourceRow = this.getRow(0);
-    this.days.forEach((_, dayIdx) => {
-      if (dayIdx === 0) {
-        return;
-      }
-      this.timeSlots.forEach((__, slotIdx) => {
-        const source = sourceRow.at(slotIdx) as FormControl<boolean>;
-        const target = this.getRow(dayIdx).at(slotIdx) as FormControl<boolean>;
-        target.setValue(!!source.value);
-      });
-    });
-  }
-
   saveAvailability(): void {
     this.availabilitySaving = true;
     this.availabilityMessage = '';

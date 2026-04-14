@@ -20,4 +20,12 @@ export class SpecialistListComponent implements OnInit {
       this.specialists = data;
     });
   }
+
+  getSlotCount(spec: Specialist): number {
+    if (spec.weekly_availability) {
+      return Object.values(spec.weekly_availability)
+        .reduce((sum, slots) => sum + (slots ? slots.length : 0), 0);
+    }
+    return spec.time_slots ? spec.time_slots.length : 0;
+  }
 }

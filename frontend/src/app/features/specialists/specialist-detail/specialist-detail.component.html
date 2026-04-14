@@ -19,15 +19,18 @@
             <div class="detail-section slots-section">
               <h2>Available Time Slots</h2>
               <div class="slots-grid">
-                @for (slot of specialist.time_slots; track slot) {
+                @for (slot of getUniqueSlots(specialist); track slot) {
                   <span
                     class="slot-chip"
                     >
                     {{ slot }}
                   </span>
                 }
+                @if (getUniqueSlots(specialist).length === 0) {
+                  <span class="slots-note">No active time slots this week.</span>
+                }
               </div>
-              <p class="slots-note">Each session is 15 minutes. Pick a slot when booking.</p>
+              <p class="slots-note">Each session is 30 minutes. Pick a slot when booking.</p>
             </div>
           </div>
           <div class="detail-actions">
@@ -39,6 +42,7 @@
               >
               🆘 Book {{ specialist.name }} Now
             </a>
+            <a [routerLink]="['/calendar']" [queryParams]="{ specialist_slug: specialist.slug }" class="btn btn-back">📅 Check full calendar</a>
             <a routerLink="/specialists" class="btn btn-back">← Back to Roster</a>
           </div>
         </div>

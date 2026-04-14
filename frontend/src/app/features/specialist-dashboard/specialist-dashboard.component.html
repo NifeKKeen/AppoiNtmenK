@@ -22,7 +22,6 @@
         <h2>Availability Manager</h2>
         <div class="tools">
           <button class="btn ghost" type="button" (click)="clearAll()">Clear all</button>
-          <button class="btn ghost" type="button" (click)="copyFirstDayToWeek()">Copy Monday to week</button>
           <button class="btn primary" type="button" (click)="saveAvailability()" [disabled]="availabilitySaving">
             {{ availabilitySaving ? 'Saving...' : 'Save availability' }}
           </button>

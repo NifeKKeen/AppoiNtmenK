@@ -32,4 +32,12 @@ export class SpecialistDetailComponent implements OnInit {
       }
     });
   }
+
+  getUniqueSlots(spec: Specialist): string[] {
+    if (spec.weekly_availability) {
+      const allSlots = Object.values(spec.weekly_availability).flat();
+      return Array.from(new Set(allSlots)).sort();
+    }
+    return spec.time_slots || [];
+  }
 }
