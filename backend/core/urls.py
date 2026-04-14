@@ -21,6 +21,7 @@ from .views import (
     SpecialistGoogleCallbackView,
     SpecialistDailyAvailabilityView,
     AvailabilityCalendarView,
+    ChatMessageListCreateView,
 )
 
 router = DefaultRouter()
@@ -43,5 +44,6 @@ urlpatterns = [
     path('specialist/google/callback/', SpecialistGoogleCallbackView.as_view(), name='specialist_google_callback'),
     path('specialists/<slug:slug>/availability/', SpecialistDailyAvailabilityView.as_view(), name='specialist_daily_availability'),
     path('calendar/availability/', AvailabilityCalendarView.as_view(), name='availability_calendar'),
+    path('appointments/<int:appointment_id>/messages/', ChatMessageListCreateView.as_view(), name='chat_messages'),
     path('', include(router.urls)),
 ]

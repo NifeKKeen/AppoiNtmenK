@@ -10,6 +10,7 @@ from django.core.signing import BadSignature, SignatureExpired
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.dateparse import parse_date
 from rest_framework import generics, status, viewsets
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -22,9 +23,10 @@ from .google_calendar import (
     is_google_oauth_configured,
     store_tokens_on_specialist,
 )
-from .models import Appointment, Specialist
+from .models import Appointment, ChatMessage, Specialist
 from .serializers import (
     AppointmentSerializer,
+    ChatMessageSerializer,
     RegisterSerializer,
     SpecialistAvailabilitySerializer,
     SpecialistRequestSerializer,
@@ -474,3 +476,42 @@ class SpecialistGoogleCallbackView(APIView):
             return redirect(
                 f'{frontend_url}/specialist/dashboard?google=error&reason={quote_plus(str(exc))}'
             )
+
+
+class ChatMessageListCreateView(generics.ListCreateAPIView):
+    """
+    Chat messages for an appointment.
+    - GET  /api/appointments/<id>/messages/          list all (supports ?after=<msg_id>)
+    - POST /api/appointments/<id>/messages/          send a new message
+    Only the appointment's user or the specialist's user may access.
+    """
+
+    serializer_class = ChatMessageSerializer
+    permission_classes = [IsAuthenticated]
+
+    def _get_appointment(self) -> Appointment:
+        appointment = get_object_or_404(Appointment, id=self.kwargs['appointment_id'])
+        user = self.request.user
+        is_owner = appointment.user_id == user.id
+        is_specialist = (
+            appointment.specialist.user_id is not None
+            and appointment.specialist.user_id == user.id
+        )
+        if not (is_owner or is_specialist):
+            raise PermissionDenied('You are not a participant of this appointment.')
+        return appointment
+
+    def get_queryset(self):
+        appointment = self._get_appointment()
+        qs = ChatMessage.objects.filter(appointment=appointment)
+        after = self.request.query_params.get('after')
+        if after:
+            try:
+                qs = qs.filter(id__gt=int(after))
+            except (ValueError, TypeError):
+                pass
+        return qs
+
+    def perform_create(self, serializer):
+        appointment = self._get_appointment()
+        serializer.save(sender=self.request.user, appointment=appointment)

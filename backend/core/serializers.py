@@ -4,7 +4,7 @@ from django.utils.text import slugify
 import re
 from typing import Dict, Any
 
-from .models import Specialist, Appointment
+from .models import Specialist, Appointment, ChatMessage
 
 User = get_user_model()
 
@@ -273,3 +273,16 @@ class AppointmentSerializer(serializers.ModelSerializer):
             'date', 'time_slot', 'description', 'status', 'created_at'
         ]
         read_only_fields = ['user', 'status']
+
+
+class ChatMessageSerializer(serializers.ModelSerializer):
+    sender_username = serializers.CharField(source='sender.username', read_only=True)
+    sender_role = serializers.CharField(source='sender.role', read_only=True)
+
+    class Meta:
+        model = ChatMessage
+        fields = [
+            'id', 'appointment', 'sender', 'sender_username',
+            'sender_role', 'body', 'created_at',
+        ]
+        read_only_fields = ['appointment', 'sender', 'created_at']

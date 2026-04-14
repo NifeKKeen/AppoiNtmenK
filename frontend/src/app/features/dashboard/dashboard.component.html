@@ -127,13 +127,22 @@
                 </div>
               </div>
               <p class="appt-desc">{{ appt.description }}</p>
-              <button
-                class="btn btn-cancel"
-                (click)="cancelAppointment(appt.id)"
-                [id]="'cancel-' + appt.id"
+              <div class="appt-actions">
+                <a
+                  [routerLink]="['/chat', appt.id]"
+                  class="btn btn-chat"
+                  [id]="'chat-' + appt.id"
                 >
-                ✕ Cancel
-              </button>
+                  💬 Chat
+                </a>
+                <button
+                  class="btn btn-cancel"
+                  (click)="cancelAppointment(appt.id)"
+                  [id]="'cancel-' + appt.id"
+                >
+                  ✕ Cancel
+                </button>
+              </div>
             </div>
           }
         </div>

@@ -113,3 +113,26 @@ class Appointment(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user.username} → {self.specialist.name} on {self.date} at {self.time_slot}"
+
+
+class ChatMessage(models.Model):
+    """Single message in an appointment's chat thread."""
+
+    appointment = models.ForeignKey(
+        Appointment,
+        on_delete=models.CASCADE,
+        related_name='messages',
+    )
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='chat_messages',
+    )
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self) -> str:
+        return f"{self.sender.username} @ {self.created_at:%H:%M}: {self.body[:40]}"

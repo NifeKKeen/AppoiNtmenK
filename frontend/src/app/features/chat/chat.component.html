@@ -1,0 +1,95 @@
+<div class="chat-page" id="chat-page">
+  <div class="chat-header">
+    <a routerLink="/dashboard" class="back-btn" id="chat-back-btn">← Back</a>
+    <div class="chat-title">
+      <h1>💬 Chat</h1>
+      <span class="chat-subtitle">Appointment #{{ appointmentId }}</span>
+    </div>
+    <div class="poll-indicator" title="Auto-refreshing every 5s">
+      <span class="pulse-dot"></span>
+      Live
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="chat-loading">
+      <div class="spinner"></div>
+      <p>Loading conversation...</p>
+    </div>
+  }
+
+  @if (error) {
+    <div class="chat-error" id="chat-error">
+      <span class="error-icon">⚠️</span>
+      <p>{{ error }}</p>
+      <a routerLink="/dashboard" class="btn-back">Return to Dashboard</a>
+    </div>
+  }
+
+  @if (!loading && !error) {
+    <div class="messages-wrapper" #messagesContainer id="messages-container">
+      @if (messages.length === 0) {
+        <div class="empty-chat">
+          <div class="empty-icon">💬</div>
+          <h2>No messages yet</h2>
+          <p>Start the conversation by typing a message below.</p>
+        </div>
+      }
+
+      @for (msg of messages; track msg.id; let i = $index) {
+        @if (i === 0 || formatDate(msg.created_at) !== formatDate(messages[i - 1].created_at)) {
+          <div class="date-divider">
+            <span>{{ formatDate(msg.created_at) }}</span>
+          </div>
+        }
+
+        <div
+          class="message-row"
+          [class.own]="isOwnMessage(msg)"
+          [class.other]="!isOwnMessage(msg)"
+          [id]="'message-' + msg.id"
+        >
+          <div class="bubble">
+            <div class="bubble-header">
+              <span class="sender-name">
+                {{ msg.sender_username }}
+                @if (msg.sender_role === 'SPECIALIST') {
+                  <span class="role-badge specialist-badge">Specialist</span>
+                }
+                @if (msg.sender_role === 'USER') {
+                  <span class="role-badge user-badge">User</span>
+                }
+              </span>
+              <span class="msg-time">{{ formatTime(msg.created_at) }}</span>
+            </div>
+            <p class="bubble-body">{{ msg.body }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="chat-input-bar" id="chat-input-bar">
+      <textarea
+        [(ngModel)]="newMessage"
+        (keydown)="onKeydown($event)"
+        placeholder="Type a message..."
+        rows="1"
+        class="chat-input"
+        id="chat-input"
+        [disabled]="sending"
+      ></textarea>
+      <button
+        class="send-btn"
+        (click)="send()"
+        [disabled]="sending || !newMessage.trim()"
+        id="chat-send-btn"
+      >
+        @if (sending) {
+          <span class="send-spinner"></span>
+        } @else {
+          <span class="send-icon">➤</span>
+        }
+      </button>
+    </div>
+  }
+</div>

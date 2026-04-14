@@ -119,12 +119,20 @@
               <p class="meta">{{ item.date }} at {{ item.time_slot }} · {{ item.student_email }}</p>
               <p class="description">{{ item.description }}</p>
 
-              @if (item.status === 'pending') {
-                <div class="actions">
+              <div class="request-actions">
+                <a
+                  [routerLink]="['/chat', item.id]"
+                  class="btn chat"
+                  [id]="'specialist-chat-' + item.id"
+                >
+                  💬 Chat
+                </a>
+
+                @if (item.status === 'pending') {
                   <button class="btn primary" type="button" (click)="acceptRequest(item.id)">Accept (Rescue)</button>
                   <button class="btn danger" type="button" (click)="rejectRequest(item.id)">Reject</button>
-                </div>
-              }
+                }
+              </div>
             </article>
           }
         </div>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Specialist, Appointment
+from .models import User, Specialist, Appointment, ChatMessage
 
 
 @admin.register(User)
@@ -19,3 +19,10 @@ class SpecialistAdmin(admin.ModelAdmin):
 class AppointmentAdmin(admin.ModelAdmin):
     list_display = ['user', 'specialist', 'date', 'time_slot', 'status', 'created_at']
     list_filter = ['status', 'specialist', 'date']
+
+
+@admin.register(ChatMessage)
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = ['appointment', 'sender', 'body', 'created_at']
+    list_filter = ['created_at']
+    raw_id_fields = ['appointment', 'sender']
