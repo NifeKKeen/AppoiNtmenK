@@ -5,7 +5,6 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import { AuthService, UserProfile } from '../../core/services/auth.service';
 import {
-  GoogleCalendarStatus,
   SpecialistRequest,
   SpecialistService,
 } from '../../core/services/specialist.service';
@@ -52,11 +51,6 @@ export class SpecialistDashboardComponent implements OnInit {
   requestsError = '';
   requestActionMessage = '';
 
-  googleStatus: GoogleCalendarStatus | null = null;
-  googleLoading = true;
-  googleError = '';
-  googleMessage = '';
-
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -66,7 +60,6 @@ export class SpecialistDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.initGrid();
-    this.consumeGoogleCallbackResult();
     this.loadProfile();
   }
 
@@ -167,34 +160,6 @@ export class SpecialistDashboardComponent implements OnInit {
     });
   }
 
-  connectGoogleCalendar(): void {
-    this.googleError = '';
-    this.specialistService.getGoogleConnectUrl().subscribe({
-      next: (response) => {
-        window.location.href = response.auth_url;
-      },
-      error: (err) => {
-        this.googleError = this.extractError(err, 'Google Calendar connection is unavailable.');
-      },
-    });
-  }
-
-  disconnectGoogleCalendar(): void {
-    this.googleError = '';
-    this.googleMessage = '';
-    this.specialistService.disconnectGoogleCalendar().subscribe({
-      next: (response) => {
-        if (this.googleStatus) {
-          this.googleStatus.connected = response.connected;
-        }
-        this.googleMessage = 'Google Calendar disconnected.';
-      },
-      error: (err) => {
-        this.googleError = this.extractError(err, 'Failed to disconnect Google Calendar.');
-      },
-    });
-  }
-
   private initGrid(): void {
     const rows = this.fb.array(
       this.days.map(() =>
@@ -217,19 +182,16 @@ export class SpecialistDashboardComponent implements OnInit {
         if (!profile.is_specialist) {
           this.availabilityLoading = false;
           this.requestsLoading = false;
-          this.googleLoading = false;
           return;
         }
 
         this.loadAvailability();
         this.loadRequests();
-        this.loadGoogleStatus();
       },
       error: () => {
         this.profileLoading = false;
         this.availabilityLoading = false;
         this.requestsLoading = false;
-        this.googleLoading = false;
       },
     });
   }
@@ -263,20 +225,6 @@ export class SpecialistDashboardComponent implements OnInit {
     });
   }
 
-  private loadGoogleStatus(): void {
-    this.googleLoading = true;
-    this.specialistService.getGoogleStatus().subscribe({
-      next: (status) => {
-        this.googleStatus = status;
-        this.googleLoading = false;
-      },
-      error: (err) => {
-        this.googleLoading = false;
-        this.googleError = this.extractError(err, 'Failed to load Google status.');
-      },
-    });
-  }
-
   private patchAvailability(map: Record<string, string[]>): void {
     this.days.forEach((day, dayIdx) => {
       const selected = new Set(map[day.key] || []);
@@ -302,20 +250,6 @@ export class SpecialistDashboardComponent implements OnInit {
     });
 
     return payload;
-  }
-
-  private consumeGoogleCallbackResult(): void {
-    const status = this.route.snapshot.queryParamMap.get('google');
-    const reason = this.route.snapshot.queryParamMap.get('reason');
-
-    if (status === 'connected') {
-      this.googleMessage = 'Google Calendar connected successfully.';
-      return;
-    }
-
-    if (status === 'error') {
-      this.googleError = reason ? decodeURIComponent(reason) : 'Failed to connect Google Calendar.';
-    }
   }
 
   private buildTimeSlots(start: string, end: string, stepMinutes: number): string[] {

@@ -414,10 +414,20 @@ class SpecialistGoogleStatusView(APIView):
 
     def get(self, request: Any) -> Response:
         specialist = request.user.specialist_profile
+        missing_vars = []
+        if not settings.GOOGLE_CLIENT_ID:
+            missing_vars.append('GOOGLE_CLIENT_ID')
+        if not settings.GOOGLE_CLIENT_SECRET:
+            missing_vars.append('GOOGLE_CLIENT_SECRET')
+        if not settings.GOOGLE_OAUTH_REDIRECT_URI:
+            missing_vars.append('GOOGLE_OAUTH_REDIRECT_URI')
+
         return Response(
             {
                 'connected': specialist.google_calendar_connected,
                 'configured': is_google_oauth_configured(),
+                'missing_vars': missing_vars,
+                'oauth_redirect_uri': settings.GOOGLE_OAUTH_REDIRECT_URI,
             },
             status=status.HTTP_200_OK,
         )
