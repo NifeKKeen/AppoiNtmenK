@@ -28,7 +28,7 @@
   flex-shrink: 0;
 }
 
-.brand-i {
+.brand-coloured {
   background: linear-gradient(135deg, hsl(270, 70%, 60%), hsl(160, 70%, 50%));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
