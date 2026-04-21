@@ -99,7 +99,6 @@ class Appointment(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-        # Prevent double-booking the same specialist at the same date+time
         unique_together = ['specialist', 'date', 'time_slot']
 
     def __str__(self) -> str:
