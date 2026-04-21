@@ -1,0 +1,533 @@
+{
+	"info": {
+		"name": "AppoiNtmenK API",
+		"description": "Full API collection for the AppoiNtmenK backend.\n\n## Setup\n1. Set the `base_url` variable (default `http://localhost:8000/api`).\n2. Call **Login** — the token is saved automatically into `{{token}}`.\n3. All authenticated requests use `Bearer {{token}}` via the collection-level auth.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"description": "Registration and JWT authentication.",
+			"item": [
+				{
+					"name": "Register (Student)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"auth": { "type": "noauth" },
+						"url": {
+							"raw": "{{base_url}}/register/",
+							"host": ["{{base_url}}"],
+							"path": ["register", ""]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"student1\",\n  \"email\": \"student1@example.com\",\n  \"password\": \"TestPass123!\"\n}"
+						},
+						"description": "Register a new student account."
+					}
+				},
+				{
+					"name": "Register (Specialist)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"auth": { "type": "noauth" },
+						"url": {
+							"raw": "{{base_url}}/register/",
+							"host": ["{{base_url}}"],
+							"path": ["register", ""]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"specialist1\",\n  \"email\": \"specialist1@example.com\",\n  \"password\": \"TestPass123!\",\n  \"become_specialist\": true,\n  \"specialist_role\": \"Психолог\",\n  \"specialist_description\": \"Помогаю студентам справляться со стрессом\",\n  \"specialist_icon\": \"🧠\"\n}"
+						},
+						"description": "Register a new specialist account with profile details."
+					}
+				},
+				{
+					"name": "Login (Token Obtain)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var json = pm.response.json();",
+									"if (json.access) {",
+									"    pm.collectionVariables.set('token', json.access);",
+									"}",
+									"if (json.refresh) {",
+									"    pm.collectionVariables.set('refresh_token', json.refresh);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"auth": { "type": "noauth" },
+						"url": {
+							"raw": "{{base_url}}/token/",
+							"host": ["{{base_url}}"],
+							"path": ["token", ""]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"student1\",\n  \"password\": \"TestPass123!\"\n}"
+						},
+						"description": "Obtain JWT access & refresh tokens. Tokens are auto-saved to collection variables."
+					}
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var json = pm.response.json();",
+									"if (json.access) {",
+									"    pm.collectionVariables.set('token', json.access);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"auth": { "type": "noauth" },
+						"url": {
+							"raw": "{{base_url}}/token/refresh/",
+							"host": ["{{base_url}}"],
+							"path": ["token", "refresh", ""]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+						},
+						"description": "Refresh an expired access token using the refresh token."
+					}
+				}
+			]
+		},
+		{
+			"name": "Profile",
+			"description": "Current user profile and specialist upgrade.",
+			"item": [
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/profile/",
+							"host": ["{{base_url}}"],
+							"path": ["profile", ""]
+						},
+						"description": "Returns the authenticated user's profile, including specialist_profile if applicable."
+					}
+				},
+				{
+					"name": "Upgrade to Specialist",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/profile/upgrade-specialist/",
+							"host": ["{{base_url}}"],
+							"path": ["profile", "upgrade-specialist", ""]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"specialist_role\": \"Тьютор\",\n  \"specialist_description\": \"Помогаю с адаптацией в университете\",\n  \"specialist_icon\": \"📚\"\n}"
+						},
+						"description": "Upgrade the current student account to a specialist. Creates or updates the SpecialistDetails profile."
+					}
+				}
+			]
+		},
+		{
+			"name": "Specialists (Public)",
+			"description": "Public read-only specialist directory.",
+			"item": [
+				{
+					"name": "List All Specialists",
+					"request": {
+						"method": "GET",
+						"auth": { "type": "noauth" },
+						"url": {
+							"raw": "{{base_url}}/specialists/",
+							"host": ["{{base_url}}"],
+							"path": ["specialists", ""]
+						},
+						"description": "List all active specialist profiles (public, no auth required)."
+					}
+				},
+				{
+					"name": "Get Specialist by Slug",
+					"request": {
+						"method": "GET",
+						"auth": { "type": "noauth" },
+						"url": {
+							"raw": "{{base_url}}/specialists/specialist1/",
+							"host": ["{{base_url}}"],
+							"path": ["specialists", "specialist1", ""]
+						},
+						"description": "Get a single specialist's profile by slug."
+					}
+				},
+				{
+					"name": "Specialist Daily Availability",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/specialists/specialist1/availability/?date=2026-04-22",
+							"host": ["{{base_url}}"],
+							"path": ["specialists", "specialist1", "availability", ""],
+							"query": [
+								{ "key": "date", "value": "2026-04-22", "description": "Date in YYYY-MM-DD format. Defaults to today." }
+							]
+						},
+						"description": "Show free and booked slots for one specialist on a specific date."
+					}
+				}
+			]
+		},
+		{
+			"name": "Calendar",
+			"description": "Global availability calendar with filters.",
+			"item": [
+				{
+					"name": "Availability Calendar",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/calendar/availability/?start_date=2026-04-22&days=7&specialist_slug=&time_from=09:00&time_to=18:00",
+							"host": ["{{base_url}}"],
+							"path": ["calendar", "availability", ""],
+							"query": [
+								{ "key": "start_date", "value": "2026-04-22", "description": "Start date (YYYY-MM-DD). Defaults to today." },
+								{ "key": "days", "value": "7", "description": "Number of days to show (1–31). Default 7." },
+								{ "key": "specialist_slug", "value": "", "description": "Filter by specialist slug (optional)." },
+								{ "key": "time_from", "value": "09:00", "description": "Show slots from this time (optional)." },
+								{ "key": "time_to", "value": "18:00", "description": "Show slots up to this time (optional)." }
+							]
+						},
+						"description": "Multi-day availability grid across all specialists. Supports specialist_slug, time_from, and time_to filters."
+					}
+				}
+			]
+		},
+		{
+			"name": "Appointments",
+			"description": "Student appointment CRUD.",
+			"item": [
+				{
+					"name": "List My Appointments",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/appointments/",
+							"host": ["{{base_url}}"],
+							"path": ["appointments", ""]
+						},
+						"description": "List all appointments for the authenticated user."
+					}
+				},
+				{
+					"name": "Create Appointment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/appointments/",
+							"host": ["{{base_url}}"],
+							"path": ["appointments", ""]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"specialist\": 1,\n  \"date\": \"2026-04-22\",\n  \"time_slot\": \"09:00\",\n  \"description\": \"Нужна помощь с курсовой работой\"\n}"
+						},
+						"description": "Book a new appointment. The user is assigned automatically from the token."
+					}
+				},
+				{
+					"name": "Get Appointment Detail",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/appointments/1/",
+							"host": ["{{base_url}}"],
+							"path": ["appointments", "1", ""]
+						},
+						"description": "Retrieve a specific appointment by ID."
+					}
+				},
+				{
+					"name": "Update Appointment (PUT)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/appointments/1/",
+							"host": ["{{base_url}}"],
+							"path": ["appointments", "1", ""]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"specialist\": 1,\n  \"date\": \"2026-04-23\",\n  \"time_slot\": \"10:00\",\n  \"description\": \"Перенёс запись на другой день\"\n}"
+						},
+						"description": "Full update of an appointment."
+					}
+				},
+				{
+					"name": "Partial Update Appointment (PATCH)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/appointments/1/",
+							"host": ["{{base_url}}"],
+							"path": ["appointments", "1", ""]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"description\": \"Обновлённое описание проблемы\"\n}"
+						},
+						"description": "Partial update of an appointment (only specified fields)."
+					}
+				},
+				{
+					"name": "Delete Appointment",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{base_url}}/appointments/1/",
+							"host": ["{{base_url}}"],
+							"path": ["appointments", "1", ""]
+						},
+						"description": "Delete an appointment by ID."
+					}
+				}
+			]
+		},
+		{
+			"name": "Specialist Dashboard",
+			"description": "Specialist-only endpoints: availability management and incoming requests.",
+			"item": [
+				{
+					"name": "Get My Availability",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/specialist/availability/",
+							"host": ["{{base_url}}"],
+							"path": ["specialist", "availability", ""]
+						},
+						"description": "Get the authenticated specialist's weekly availability grid."
+					}
+				},
+				{
+					"name": "Update My Availability",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/specialist/availability/",
+							"host": ["{{base_url}}"],
+							"path": ["specialist", "availability", ""]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"weekly_availability\": {\n    \"mon\": [\"09:00\", \"09:30\", \"10:00\", \"10:30\"],\n    \"tue\": [\"09:00\", \"09:30\", \"10:00\"],\n    \"wed\": [\"14:00\", \"14:30\", \"15:00\"],\n    \"thu\": [\"09:00\", \"09:30\"],\n    \"fri\": [\"10:00\", \"10:30\", \"11:00\"],\n    \"sat\": [],\n    \"sun\": []\n  }\n}"
+						},
+						"description": "Set the specialist's weekly availability. Each weekday maps to a list of HH:MM time slots."
+					}
+				},
+				{
+					"name": "List Incoming Requests",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/specialist/requests/",
+							"host": ["{{base_url}}"],
+							"path": ["specialist", "requests", ""]
+						},
+						"description": "List all appointment requests for the authenticated specialist."
+					}
+				},
+				{
+					"name": "Accept Request",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{base_url}}/specialist/requests/1/accept/",
+							"host": ["{{base_url}}"],
+							"path": ["specialist", "requests", "1", "accept", ""]
+						},
+						"description": "Accept a pending appointment request. If Google Calendar is connected, syncs the event automatically."
+					}
+				},
+				{
+					"name": "Reject Request",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{base_url}}/specialist/requests/1/reject/",
+							"host": ["{{base_url}}"],
+							"path": ["specialist", "requests", "1", "reject", ""]
+						},
+						"description": "Reject a pending appointment request."
+					}
+				}
+			]
+		},
+		{
+			"name": "Google Calendar",
+			"description": "Specialist Google Calendar OAuth integration.",
+			"item": [
+				{
+					"name": "Google OAuth Status",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/specialist/google/status/",
+							"host": ["{{base_url}}"],
+							"path": ["specialist", "google", "status", ""]
+						},
+						"description": "Check if Google Calendar is connected and whether OAuth is configured on the server."
+					}
+				},
+				{
+					"name": "Google OAuth Connect (Get Auth URL)",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/specialist/google/connect/",
+							"host": ["{{base_url}}"],
+							"path": ["specialist", "google", "connect", ""]
+						},
+						"description": "Get the Google OAuth consent URL. Open the returned auth_url in a browser to authorize."
+					}
+				},
+				{
+					"name": "Google OAuth Callback",
+					"request": {
+						"method": "GET",
+						"auth": { "type": "noauth" },
+						"url": {
+							"raw": "{{base_url}}/specialist/google/callback/?code=AUTH_CODE&state=SIGNED_STATE",
+							"host": ["{{base_url}}"],
+							"path": ["specialist", "google", "callback", ""],
+							"query": [
+								{ "key": "code", "value": "AUTH_CODE", "description": "Authorization code from Google." },
+								{ "key": "state", "value": "SIGNED_STATE", "description": "Signed state token." }
+							]
+						},
+						"description": "OAuth callback endpoint (called by Google, redirects to frontend). Not meant to be called manually."
+					}
+				},
+				{
+					"name": "Google Disconnect",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{base_url}}/specialist/google/disconnect/",
+							"host": ["{{base_url}}"],
+							"path": ["specialist", "google", "disconnect", ""]
+						},
+						"description": "Disconnect the specialist's Google Calendar integration and clear stored tokens."
+					}
+				}
+			]
+		},
+		{
+			"name": "Chat",
+			"description": "Appointment chat messaging.",
+			"item": [
+				{
+					"name": "List Messages",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/appointments/1/messages/",
+							"host": ["{{base_url}}"],
+							"path": ["appointments", "1", "messages", ""],
+							"query": [
+								{ "key": "after", "value": "", "description": "Return only messages with id > this value (for polling). Optional.", "disabled": true }
+							]
+						},
+						"description": "Get all chat messages for an appointment. Use ?after=<id> for polling new messages."
+					}
+				},
+				{
+					"name": "Send Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/appointments/1/messages/",
+							"host": ["{{base_url}}"],
+							"path": ["appointments", "1", "messages", ""]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"body\": \"Здравствуйте! Хотел уточнить детали встречи.\"\n}"
+						},
+						"description": "Send a new chat message in an appointment's thread. Sender is set from the token automatically."
+					}
+				}
+			]
+		}
+	]
+}

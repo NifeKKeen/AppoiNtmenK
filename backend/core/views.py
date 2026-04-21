@@ -489,12 +489,7 @@ class SpecialistGoogleCallbackView(APIView):
 
 
 class ChatMessageListCreateView(generics.ListCreateAPIView):
-    """
-    Chat messages for an appointment.
-    - GET  /api/appointments/<id>/messages/          list all (supports ?after=<msg_id>)
-    - POST /api/appointments/<id>/messages/          send a new message
-    Only the appointment's user or the specialist's user may access.
-    """
+   
 
     serializer_class = ChatMessageSerializer
     permission_classes = [IsAuthenticated]
