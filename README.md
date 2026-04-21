@@ -7,6 +7,11 @@
 
 ---
 
+## 👥 Group Members
+- **Adilet**: Specialist roles, Calendar integration, filtering
+- **Nur**idin**: Chat system, Model refactoring, Frontend redesign, Bug fixes
+- **Kanat**: Full-stack foundation, Auth system, Deployment, all core pages
+
 ## 🗺 Project Map (Architecture)
 
 The project is clearly divided into independent client and server components:
